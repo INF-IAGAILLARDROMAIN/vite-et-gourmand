@@ -2,6 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
+import { MongoService } from '../mongo/mongo.service';
 import { CreateEmployeeDto } from './dto';
 
 @Injectable()
@@ -9,7 +10,29 @@ export class AdminService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly mailService: MailService,
+    private readonly mongoService: MongoService,
   ) {}
+
+  async getEmployees() {
+    const employees = await this.prisma.utilisateur.findMany({
+      where: {
+        role: { libelle: 'employe' },
+      },
+      include: { role: true },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return employees.map((e) => ({
+      id: e.id,
+      email: e.email,
+      nom: e.nom,
+      prenom: e.prenom,
+      telephone: e.telephone,
+      isActive: e.isActive,
+      createdAt: e.createdAt,
+      role: e.role.libelle,
+    }));
+  }
 
   async createEmployee(dto: CreateEmployeeDto) {
     const existing = await this.prisma.utilisateur.findUnique({
@@ -77,50 +100,56 @@ export class AdminService {
     return { message: 'Compte employé désactivé' };
   }
 
+  /**
+   * Get order stats grouped by menu — reads from MongoDB (NoSQL).
+   */
   async getOrderStats() {
-    // Commandes par menu
-    const stats = await this.prisma.commande.groupBy({
-      by: ['menuId'],
-      _count: { id: true },
-      _sum: { prixMenu: true, prixLivraison: true },
-    });
-
-    // Enrich with menu titles
-    const menuIds = stats.map((s) => s.menuId);
-    const menus = await this.prisma.menu.findMany({
-      where: { id: { in: menuIds } },
-      select: { id: true, titre: true },
-    });
-
-    const menuMap = new Map(menus.map((m) => [m.id, m.titre]));
-
-    return stats.map((s) => ({
-      menuId: s.menuId,
-      menuTitre: menuMap.get(s.menuId) ?? 'Menu supprimé',
-      totalCommandes: s._count.id,
-      chiffreAffaires: (s._sum.prixMenu ?? 0) + (s._sum.prixLivraison ?? 0),
-    }));
+    return this.mongoService.getOrderStatsByMenu();
   }
 
-  async getRevenueStats(menuId?: number) {
-    const where: any = {};
-    if (menuId) where.menuId = menuId;
+  /**
+   * Get revenue entries with optional filters — reads from MongoDB (NoSQL).
+   */
+  async getRevenueStats(filters?: {
+    menuId?: number;
+    dateDebut?: string;
+    dateFin?: string;
+  }) {
+    return this.mongoService.getRevenueStats({
+      menuId: filters?.menuId,
+      dateDebut: filters?.dateDebut ? new Date(filters.dateDebut) : undefined,
+      dateFin: filters?.dateFin ? new Date(filters.dateFin) : undefined,
+    });
+  }
 
+  /**
+   * Sync all commandes from PostgreSQL into MongoDB.
+   * Useful for initial population or data recovery.
+   */
+  async syncOrderStats() {
     const commandes = await this.prisma.commande.findMany({
-      where,
-      select: {
-        dateCommande: true,
-        prixMenu: true,
-        prixLivraison: true,
+      include: {
         menu: { select: { titre: true } },
+        utilisateur: { select: { id: true, nom: true, prenom: true } },
       },
-      orderBy: { dateCommande: 'asc' },
     });
 
-    return commandes.map((c) => ({
-      date: c.dateCommande,
-      menu: c.menu.titre,
-      montant: c.prixMenu + c.prixLivraison,
+    const stats = commandes.map((c) => ({
+      commandeId: c.id,
+      menuId: c.menuId,
+      menuTitre: c.menu.titre,
+      dateCommande: c.dateCommande,
+      datePrestation: c.datePrestation,
+      nombrePersonnes: c.nombrePersonnes,
+      prixMenu: c.prixMenu,
+      prixLivraison: c.prixLivraison,
+      statut: c.statut,
+      clientId: c.utilisateur.id,
+      clientNom: `${c.utilisateur.prenom} ${c.utilisateur.nom}`,
     }));
+
+    await this.mongoService.bulkUpsert(stats);
+
+    return { message: `${stats.length} commandes synchronisées vers MongoDB` };
   }
 }

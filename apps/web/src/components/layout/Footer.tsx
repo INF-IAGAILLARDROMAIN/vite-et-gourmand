@@ -1,10 +1,27 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { horaires as horairesApi } from '@/lib/api';
+import type { Horaire } from '@/lib/types';
+
+const DAYS_ORDER = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
 
 export default function Footer() {
+  const [horaires, setHoraires] = useState<Horaire[]>([]);
+
+  useEffect(() => {
+    horairesApi.getAll()
+      .then(setHoraires)
+      .catch(() => setHoraires([]));
+  }, []);
+
+  const sortedHoraires = [...horaires].sort(
+    (a, b) => DAYS_ORDER.indexOf(a.jour) - DAYS_ORDER.indexOf(b.jour),
+  );
+
   return (
     <footer className="bg-slate-900 text-slate-300">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
@@ -20,7 +37,7 @@ export default function Footer() {
                 className="h-10 w-10 brightness-0 invert"
               />
               <span className="text-xl font-heading font-bold text-white">
-                Vite & Gourmand
+                Vite &amp; Gourmand
               </span>
             </div>
             <p className="text-sm text-slate-400 leading-relaxed">
@@ -84,32 +101,47 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Horaires */}
+          {/* Horaires — dynamic from API */}
           <div>
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
               <Clock className="inline h-4 w-4 mr-1 text-primary-400" />
               Horaires
             </h3>
             <ul className="space-y-1 text-sm">
-              <li className="flex justify-between">
-                <span>Lundi - Vendredi</span>
-                <span className="text-slate-400">9h - 19h</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Samedi</span>
-                <span className="text-slate-400">10h - 18h</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Dimanche</span>
-                <span className="text-slate-400">Fermé</span>
-              </li>
+              {sortedHoraires.length > 0 ? (
+                sortedHoraires.map((h) => (
+                  <li key={h.id} className="flex justify-between">
+                    <span>{h.jour}</span>
+                    <span className="text-slate-400">
+                      {h.heureOuverture && h.heureFermeture
+                        ? `${h.heureOuverture} - ${h.heureFermeture}`
+                        : 'Fermé'}
+                    </span>
+                  </li>
+                ))
+              ) : (
+                <>
+                  <li className="flex justify-between">
+                    <span>Lundi - Vendredi</span>
+                    <span className="text-slate-400">9h - 19h</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>Samedi</span>
+                    <span className="text-slate-400">10h - 18h</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>Dimanche</span>
+                    <span className="text-slate-400">Fermé</span>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </div>
 
         <div className="border-t border-slate-800 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-slate-500">
-            &copy; {new Date().getFullYear()} Vite & Gourmand. Tous droits réservés.
+            &copy; {new Date().getFullYear()} Vite &amp; Gourmand. Tous droits réservés.
           </p>
           <div className="flex gap-4 text-sm text-slate-500">
             <Link href="/mentions-legales" className="hover:text-primary-400 transition-colors">

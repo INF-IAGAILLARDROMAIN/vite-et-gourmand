@@ -11,11 +11,13 @@ import { AvisModule } from './avis/avis.module';
 import { HoraireModule } from './horaire/horaire.module';
 import { ContactModule } from './contact/contact.module';
 import { AdminModule } from './admin/admin.module';
+import { MongoModule } from './mongo/mongo.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
+    MongoModule,
     AuthModule,
     MenuModule,
     PlatModule,

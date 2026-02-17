@@ -7,6 +7,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
+import { MongoService } from '../mongo/mongo.service';
 import { CreateCommandeDto, UpdateCommandeDto, UpdateStatutDto } from './dto';
 
 // Bordeaux city — orders here get free delivery
@@ -35,6 +36,7 @@ export class CommandeService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly mailService: MailService,
+    private readonly mongoService: MongoService,
   ) {}
 
   async create(dto: CreateCommandeDto, userId: number) {
@@ -116,6 +118,21 @@ export class CommandeService {
       commande.numeroCommande,
       prixMenuFinal + prixLivraison,
     );
+
+    // Sync to MongoDB for NoSQL stats
+    this.mongoService.upsertOrderStat({
+      commandeId: commande.id,
+      menuId: menu.id,
+      menuTitre: menu.titre,
+      dateCommande: commande.dateCommande,
+      datePrestation: commande.datePrestation,
+      nombrePersonnes: dto.nombrePersonnes,
+      prixMenu: prixMenuFinal,
+      prixLivraison,
+      statut: 'RECUE',
+      clientId: userId,
+      clientNom: `${user.prenom} ${user.nom}`,
+    }).catch(() => { /* non-blocking: MongoDB sync failure should not break order creation */ });
 
     return commande;
   }
@@ -298,6 +315,21 @@ export class CommandeService {
         commande.numeroCommande,
       );
     }
+
+    // Sync status update to MongoDB
+    this.mongoService.upsertOrderStat({
+      commandeId: updated.id,
+      menuId: updated.menuId,
+      menuTitre: updated.menu.titre,
+      dateCommande: updated.dateCommande,
+      datePrestation: updated.datePrestation,
+      nombrePersonnes: updated.nombrePersonnes,
+      prixMenu: updated.prixMenu,
+      prixLivraison: updated.prixLivraison,
+      statut: dto.statut,
+      clientId: updated.utilisateurId,
+      clientNom: `${updated.utilisateur.prenom} ${updated.utilisateur.nom}`,
+    }).catch(() => { /* non-blocking */ });
 
     return updated;
   }

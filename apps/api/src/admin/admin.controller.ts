@@ -21,6 +21,11 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
+  @Get('employees')
+  getEmployees() {
+    return this.adminService.getEmployees();
+  }
+
   @Post('employees')
   createEmployee(@Body() dto: CreateEmployeeDto) {
     return this.adminService.createEmployee(dto);
@@ -37,7 +42,20 @@ export class AdminController {
   }
 
   @Get('stats/revenue')
-  getRevenueStats(@Query('menuId') menuId?: string) {
-    return this.adminService.getRevenueStats(menuId ? parseInt(menuId) : undefined);
+  getRevenueStats(
+    @Query('menuId') menuId?: string,
+    @Query('dateDebut') dateDebut?: string,
+    @Query('dateFin') dateFin?: string,
+  ) {
+    return this.adminService.getRevenueStats({
+      menuId: menuId ? parseInt(menuId) : undefined,
+      dateDebut,
+      dateFin,
+    });
+  }
+
+  @Post('stats/sync')
+  syncOrderStats() {
+    return this.adminService.syncOrderStats();
   }
 }

@@ -82,13 +82,13 @@ export const commandes = {
     request<import('./types').Commande>('/commandes', { method: 'POST', body: JSON.stringify(data) }),
 
   getMine: () =>
-    request<import('./types').Commande[]>('/commandes/mes-commandes'),
+    request<import('./types').Commande[]>('/commandes'),
 
   getById: (id: number) =>
     request<import('./types').Commande>(`/commandes/${id}`),
 
   cancel: (id: number) =>
-    request(`/commandes/${id}/cancel`, { method: 'PUT' }),
+    request(`/commandes/${id}`, { method: 'DELETE' }),
 
   updateStatus: (id: number, statut: string) =>
     request(`/commandes/${id}/status`, { method: 'PUT', body: JSON.stringify({ statut }) }),
@@ -128,6 +128,9 @@ export const contact = {
 
 // Admin
 export const admin = {
+  getEmployees: () =>
+    request<{ id: number; email: string; nom: string; prenom: string; telephone: string; isActive: boolean; createdAt: string; role: string }[]>('/admin/employees'),
+
   createEmployee: (data: { email: string; password: string; nom: string; prenom: string; telephone: string; adressePostale: string }) =>
     request('/admin/employees', { method: 'POST', body: JSON.stringify(data) }),
 
