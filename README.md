@@ -17,6 +17,9 @@
 | **Backend** | NestJS, TypeScript | 11.x |
 | **ORM** | Prisma | 7.4 |
 | **BDD SQL** | PostgreSQL (Neon) | 16 |
+| **BDD NoSQL** | MongoDB (Atlas) | 7.x |
+| **ODM** | Mongoose (@nestjs/mongoose) | 9.x |
+| **Graphiques** | Recharts | 3.x |
 | **Auth** | JWT (bcrypt + passport) | - |
 | **Emails** | Nodemailer | 8.x |
 | **Validation** | class-validator, class-transformer | - |
@@ -42,6 +45,7 @@ vite-et-gourmand/
 │   │       ├── horaire/              # Gestion des horaires
 │   │       ├── mail/                 # Service d'envoi d'emails
 │   │       ├── menu/                 # Gestion des menus
+│   │       ├── mongo/                # Service MongoDB (stats NoSQL)
 │   │       ├── plat/                 # Gestion des plats et allergènes
 │   │       └── prisma/               # Service Prisma (connexion BDD)
 │   │
@@ -134,13 +138,14 @@ ANNULEE (possible jusqu'à EN_PREPARATION)
 - **Node.js** >= 20
 - **npm** >= 10
 - **PostgreSQL** (ou compte [Neon](https://neon.tech) gratuit)
+- **MongoDB** (ou compte [MongoDB Atlas](https://cloud.mongodb.com) gratuit)
 
 ## Installation locale
 
 ### 1. Cloner le repo
 
 ```bash
-git clone https://github.com/RomainGaillworworker/vite-et-gourmand.git
+git clone https://github.com/INF-IAGAILLARDROMAIN/vite-et-gourmand.git
 cd vite-et-gourmand
 ```
 
@@ -155,12 +160,15 @@ Créer un fichier `.env` dans `apps/api/` :
 
 ```env
 DATABASE_URL="postgresql://user:password@host:5432/vite_et_gourmand"
+MONGODB_URI="mongodb+srv://user:password@cluster.mongodb.net/vite-et-gourmand"
 JWT_SECRET="votre-secret-jwt-min-32-caracteres"
-JWT_EXPIRATION="24h"
-MAIL_HOST="smtp.example.com"
-MAIL_PORT=587
-MAIL_USER="votre-email@example.com"
-MAIL_PASS="votre-mot-de-passe-email"
+JWT_EXPIRES_IN="7d"
+FRONTEND_URL="http://localhost:3001"
+SMTP_HOST="smtp.ethereal.email"
+SMTP_PORT=587
+SMTP_USER=""
+SMTP_PASS=""
+MAIL_FROM="Vite & Gourmand <noreply@viteetgourmand.fr>"
 ```
 
 Lancer les migrations et le seed :
@@ -251,8 +259,12 @@ Le frontend est accessible sur `http://localhost:3001`.
 | GET | `/horaires` | Liste des horaires | Non |
 | PUT | `/horaires/:id` | Modifier un horaire | Employé/Admin |
 | POST | `/contact` | Envoyer un message | Non |
-| GET | `/admin/stats/orders` | Statistiques commandes | Admin |
+| GET | `/admin/stats/orders` | Statistiques commandes (MongoDB) | Admin |
+| GET | `/admin/stats/revenue` | CA par menu avec filtres | Admin |
+| POST | `/admin/stats/sync` | Synchroniser PostgreSQL -> MongoDB | Admin |
+| GET | `/admin/employees` | Liste des employés | Admin |
 | POST | `/admin/employees` | Créer un employé | Admin |
+| PUT | `/admin/employees/:id/disable` | Désactiver un employé | Admin |
 
 ## Securite
 

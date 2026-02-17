@@ -7,14 +7,20 @@
 │   Vercel     │────>│   Railway    │────>│   Neon       │
 │   Frontend   │     │   Backend    │     │   PostgreSQL │
 │   Next.js    │     │   NestJS     │     │              │
-└──────────────┘     └──────────────┘     └──────────────┘
+└──────────────┘     └──────────┬───┘     └──────────────┘
+                               │
+                     ┌─────────▼────┐
+                     │ MongoDB Atlas│
+                     │ (NoSQL stats)│
+                     └──────────────┘
 ```
 
 | Service | Plateforme | Plan gratuit |
 |---------|-----------|-------------|
 | Frontend | [Vercel](https://vercel.com) | Oui |
 | Backend | [Railway](https://railway.app) | 5$/mois (essai gratuit) |
-| Base de données | [Neon](https://neon.tech) | Oui (0.5 GB) |
+| BDD SQL | [Neon](https://neon.tech) | Oui (0.5 GB) |
+| BDD NoSQL | [MongoDB Atlas](https://cloud.mongodb.com) | Oui (512 MB) |
 
 ---
 
@@ -50,7 +56,35 @@ npx prisma db seed
 
 ---
 
-## 3. Étape 2 : Backend (Railway)
+## 3. Etape 2 : MongoDB Atlas
+
+### 3.1 Creer un cluster
+
+1. Aller sur [cloud.mongodb.com](https://cloud.mongodb.com) et créer un compte
+2. Créer un nouveau cluster : **Shared (gratuit)**
+3. Région : **Europe West (Paris / Ireland)**
+4. Nom du cluster : **vite-et-gourmand**
+
+### 3.2 Configurer l'acces
+
+1. **Database Access** : créer un utilisateur avec mot de passe
+2. **Network Access** : ajouter `0.0.0.0/0` (autoriser toutes les IP) pour que Railway puisse y accéder
+3. Copier le **Connection string** :
+   ```
+   mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/vite-et-gourmand?retryWrites=true&w=majority
+   ```
+
+### 3.3 Peupler les stats
+
+Après le déploiement du backend, exécuter la synchronisation initiale :
+```bash
+curl -X POST https://votre-url.railway.app/api/admin/stats/sync \
+  -H "Authorization: Bearer <token-admin>"
+```
+
+---
+
+## 4. Etape 3 : Backend (Railway)
 
 ### 3.1 Déployer sur Railway
 
@@ -59,7 +93,7 @@ npx prisma db seed
 3. Sélectionner le repo **vite-et-gourmand**
 4. Railway va détecter automatiquement le projet
 
-### 3.2 Configurer Railway
+### 4.2 Configurer Railway
 
 Dans les paramètres du service :
 
@@ -71,16 +105,19 @@ Dans les paramètres du service :
 **Variables d'environnement :**
 ```
 DATABASE_URL=postgresql://user:password@ep-xxx.neon.tech/neondb?sslmode=require
+MONGODB_URI=mongodb+srv://user:password@cluster0.xxxxx.mongodb.net/vite-et-gourmand?retryWrites=true&w=majority
 JWT_SECRET=votre-secret-jwt-production-32-chars-min
-JWT_EXPIRATION=24h
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USER=votre-email@gmail.com
-MAIL_PASS=votre-app-password
+JWT_EXPIRES_IN=7d
+FRONTEND_URL=https://vite-et-gourmand.vercel.app
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=votre-email@gmail.com
+SMTP_PASS=votre-app-password
+MAIL_FROM=Vite & Gourmand <noreply@viteetgourmand.fr>
 PORT=3000
 ```
 
-### 3.3 Vérifier le déploiement
+### 5.3 Vérifier le déploiement
 
 Railway génère une URL publique, par exemple :
 ```
@@ -91,15 +128,15 @@ Tester : `GET https://votre-url.railway.app/api`
 
 ---
 
-## 4. Étape 3 : Frontend (Vercel)
+## 5. Etape 4 : Frontend (Vercel)
 
-### 4.1 Déployer sur Vercel
+### 5.1 Déployer sur Vercel
 
 1. Aller sur [vercel.com](https://vercel.com) et se connecter avec GitHub
 2. Cliquer sur **Add New** > **Project**
 3. Importer le repo **vite-et-gourmand**
 
-### 4.2 Configurer Vercel
+### 5.2 Configurer Vercel
 
 **Build settings :**
 - Framework Preset : **Next.js**
@@ -110,7 +147,7 @@ Tester : `GET https://votre-url.railway.app/api`
 NEXT_PUBLIC_API_URL=https://votre-url.railway.app/api
 ```
 
-### 4.3 Vérifier le déploiement
+### 5.3 Vérifier le déploiement
 
 Vercel génère une URL publique, par exemple :
 ```
@@ -119,7 +156,7 @@ https://vite-et-gourmand.vercel.app
 
 ---
 
-## 5. Configuration CORS
+## 6. Configuration CORS
 
 Mettre à jour le backend pour autoriser le domaine Vercel.
 
@@ -137,7 +174,7 @@ app.enableCors({
 
 ---
 
-## 6. Configuration email (Gmail)
+## 7. Configuration email (Gmail)
 
 Pour utiliser Gmail comme serveur SMTP :
 
@@ -150,14 +187,17 @@ Pour utiliser Gmail comme serveur SMTP :
 
 ---
 
-## 7. Checklist de déploiement
+## 8. Checklist de déploiement
 
 - [ ] Base de données Neon créée et migrée
 - [ ] Seed exécuté sur la base de production
-- [ ] Backend déployé sur Railway avec variables d'environnement
+- [ ] MongoDB Atlas cluster créé et configuré
+- [ ] Backend déployé sur Railway avec toutes les variables d'environnement
 - [ ] API accessible et fonctionnelle (test GET /api)
 - [ ] Frontend déployé sur Vercel avec NEXT_PUBLIC_API_URL configuré
 - [ ] CORS configuré pour autoriser le domaine Vercel
 - [ ] Email SMTP configuré et fonctionnel
+- [ ] Synchronisation MongoDB exécutée (POST /api/admin/stats/sync)
 - [ ] Test complet du parcours utilisateur en production
-- [ ] Test du back-office en production
+- [ ] Test du back-office et graphiques en production
+- [ ] Compte admin fonctionnel (admin@viteetgourmand.fr / Admin@2026!)

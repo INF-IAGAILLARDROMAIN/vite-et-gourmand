@@ -34,15 +34,17 @@ L'application suit une architecture **client-serveur** avec séparation complèt
 │                     │                   │                     │
 └─────────────────────┘                   └──────────┬──────────┘
                                                      │
-                                                     │ Prisma ORM
-                                                     │
-                                          ┌──────────▼──────────┐
+                                          ┌──────────┴──────────┐
                                           │                     │
-                                          │   PostgreSQL        │
-                                          │   (Neon)            │
+                                    Prisma ORM           Mongoose
                                           │                     │
-                                          └─────────────────────┘
+                               ┌──────────▼──────┐  ┌──────────▼──────┐
+                               │  PostgreSQL     │  │  MongoDB Atlas  │
+                               │  (Neon)         │  │  (NoSQL stats)  │
+                               └─────────────────┘  └─────────────────┘
 ```
+
+> **Double base de données** : PostgreSQL gère les données relationnelles (utilisateurs, menus, commandes) tandis que MongoDB stocke les statistiques agrégées pour le dashboard admin (commandes par menu, chiffre d'affaires).
 
 ### 2.2 Frontend - Next.js 16
 
@@ -313,13 +315,16 @@ Le back-office est accessible aux employés et administrateurs via `/admin`. Il 
 
 **Backend (`apps/api/.env`) :**
 ```
-DATABASE_URL=            # URL de connexion PostgreSQL
+DATABASE_URL=            # URL de connexion PostgreSQL (Neon)
+MONGODB_URI=             # URL de connexion MongoDB Atlas (pour stats NoSQL)
 JWT_SECRET=              # Secret de signature JWT (min. 32 caractères)
-JWT_EXPIRATION=          # Durée de validité du token (ex: 24h)
-MAIL_HOST=               # Serveur SMTP
-MAIL_PORT=               # Port SMTP
-MAIL_USER=               # Email expéditeur
-MAIL_PASS=               # Mot de passe email
+JWT_EXPIRES_IN=          # Durée de validité du token (ex: 7d)
+FRONTEND_URL=            # URL du frontend (pour CORS et liens email)
+SMTP_HOST=               # Serveur SMTP
+SMTP_PORT=               # Port SMTP
+SMTP_USER=               # Email expéditeur
+SMTP_PASS=               # Mot de passe email
+MAIL_FROM=               # Adresse expéditeur (ex: noreply@viteetgourmand.fr)
 ```
 
 **Frontend (`apps/web/.env.local`) :**
@@ -343,3 +348,500 @@ Le fichier `seed.ts` alimente la base avec des données réalistes :
 - **7 horaires** : lundi à dimanche
 - **2 commandes** : une terminée, une en cours
 - **1 avis** : validé avec note 5/5
+
+---
+
+## 9. Modele Conceptuel de Donnees (MCD)
+
+Le MCD ci-dessous représente l'ensemble des entités du système et leurs associations. Il a été conçu à partir de l'Annexe 1 du cahier des charges et étendu pour couvrir les besoins fonctionnels complets.
+
+```mermaid
+erDiagram
+    ROLE ||--o{ UTILISATEUR : "possède"
+    UTILISATEUR ||--o{ COMMANDE : "passe"
+    UTILISATEUR ||--o{ AVIS : "rédige"
+
+    MENU ||--o{ COMMANDE : "concerne"
+    MENU ||--o{ MENU_IMAGE : "illustré par"
+    MENU }o--o{ THEME : "associé à"
+    MENU }o--o{ REGIME : "compatible avec"
+    MENU }o--o{ PLAT : "composé de"
+
+    PLAT }o--o{ ALLERGENE : "contient"
+
+    COMMANDE ||--o{ COMMANDE_HISTORIQUE : "historise"
+    COMMANDE ||--o| AVIS : "évalué par"
+
+    ROLE {
+        int role_id PK
+        varchar libelle UK
+    }
+
+    UTILISATEUR {
+        int utilisateur_id PK
+        varchar email UK
+        varchar password
+        varchar nom
+        varchar prenom
+        varchar telephone
+        varchar adresse_postale
+        boolean is_active
+        timestamp created_at
+        int role_id FK
+    }
+
+    MENU {
+        int menu_id PK
+        varchar titre
+        int nombre_personne_minimale
+        float prix_par_personne
+        text description
+        int quantite_restante
+        text conditions
+    }
+
+    MENU_IMAGE {
+        int id PK
+        varchar url
+        varchar alt
+        int menu_id FK
+    }
+
+    THEME {
+        int theme_id PK
+        varchar libelle UK
+    }
+
+    REGIME {
+        int regime_id PK
+        varchar libelle UK
+    }
+
+    PLAT {
+        int plat_id PK
+        varchar titre_plat
+        varchar photo
+        enum type
+    }
+
+    ALLERGENE {
+        int allergene_id PK
+        varchar libelle UK
+    }
+
+    COMMANDE {
+        int id PK
+        varchar numero_commande UK
+        timestamp date_commande
+        timestamp date_prestation
+        varchar heure_prestation
+        varchar adresse
+        float prix_menu
+        int nombre_personnes
+        float prix_livraison
+        enum statut
+        boolean validation_materiel
+        text motif_annulation
+        varchar mode_contact
+        int utilisateur_id FK
+        int menu_id FK
+    }
+
+    COMMANDE_HISTORIQUE {
+        int id PK
+        enum statut
+        timestamp date
+        int commande_id FK
+    }
+
+    AVIS {
+        int avis_id PK
+        int note
+        text description
+        enum statut
+        timestamp created_at
+        int utilisateur_id FK
+        int commande_id FK
+    }
+
+    HORAIRE {
+        int horaire_id PK
+        varchar jour UK
+        varchar heure_ouverture
+        varchar heure_fermeture
+    }
+```
+
+### Tables de liaison (Many-to-Many)
+
+| Table | Clés composites | Description |
+|-------|----------------|-------------|
+| `menu_theme` | (menu_id, theme_id) | Association menu ↔ thème |
+| `menu_regime` | (menu_id, regime_id) | Association menu ↔ régime alimentaire |
+| `menu_plat` | (menu_id, plat_id) | Composition d'un menu en plats |
+| `plat_allergene` | (plat_id, allergene_id) | Allergènes présents dans un plat |
+
+---
+
+## 10. Diagramme de cas d'utilisation
+
+Le diagramme ci-dessous montre les interactions des différents acteurs avec le système.
+
+```mermaid
+graph TB
+    subgraph Acteurs
+        V((Visiteur))
+        C((Client))
+        E((Employé))
+        A((Administrateur))
+    end
+
+    subgraph "Espace Public"
+        UC1[Consulter les menus]
+        UC2[Filtrer les menus par thème/régime/prix]
+        UC3[Voir le détail d'un menu]
+        UC4[Envoyer un message via le formulaire contact]
+        UC5[Consulter les mentions légales / CGV]
+        UC6[Voir les avis clients validés]
+    end
+
+    subgraph "Authentification"
+        UC7[S'inscrire]
+        UC8[Se connecter]
+        UC9[Réinitialiser son mot de passe]
+    end
+
+    subgraph "Espace Client"
+        UC10[Passer une commande]
+        UC11[Suivre ses commandes]
+        UC12[Modifier/Annuler une commande]
+        UC13[Laisser un avis sur une commande terminée]
+        UC14[Consulter son profil]
+    end
+
+    subgraph "Espace Employé"
+        UC15[Gérer les commandes - avancer le statut]
+        UC16[Annuler une commande avec motif]
+        UC17[Modérer les avis]
+        UC18[Gérer les menus et plats CRUD]
+        UC19[Gérer les horaires]
+    end
+
+    subgraph "Espace Administrateur"
+        UC20[Créer un compte employé]
+        UC21[Désactiver un compte employé]
+        UC22[Consulter les statistiques - graphiques]
+        UC23[Consulter le CA par menu]
+    end
+
+    V --> UC1
+    V --> UC2
+    V --> UC3
+    V --> UC4
+    V --> UC5
+    V --> UC6
+    V --> UC7
+    V --> UC8
+    V --> UC9
+
+    C --> UC1
+    C --> UC2
+    C --> UC3
+    C --> UC10
+    C --> UC11
+    C --> UC12
+    C --> UC13
+    C --> UC14
+
+    E --> UC15
+    E --> UC16
+    E --> UC17
+    E --> UC18
+    E --> UC19
+
+    A --> UC15
+    A --> UC16
+    A --> UC17
+    A --> UC18
+    A --> UC19
+    A --> UC20
+    A --> UC21
+    A --> UC22
+    A --> UC23
+```
+
+> **Note** : L'administrateur hérite de tous les droits de l'employé. Le client hérite des droits du visiteur.
+
+---
+
+## 11. Diagramme de sequence - Parcours commande
+
+Ce diagramme illustre le flux complet d'une commande, de la création à la terminaison.
+
+```mermaid
+sequenceDiagram
+    actor Client
+    participant Frontend as Frontend (Next.js)
+    participant API as Backend (NestJS)
+    participant PG as PostgreSQL
+    participant Mongo as MongoDB Atlas
+    participant Mail as Service Mail
+
+    Note over Client, Mail: Phase 1 - Création de la commande
+
+    Client->>Frontend: Remplit le formulaire de commande
+    Frontend->>Frontend: Calcul dynamique du prix (menu + livraison + réduction)
+    Client->>Frontend: Valide la commande
+    Frontend->>API: POST /api/commandes (JWT + données)
+
+    API->>PG: Vérifie l'utilisateur
+    API->>PG: Vérifie le menu et le stock
+    alt Stock disponible
+        API->>PG: Transaction : décrémenter stock + créer commande
+        PG-->>API: Commande créée (statut RECUE)
+        API->>Mongo: Sync stats commande (async)
+        API->>Mail: Email confirmation (async)
+        Mail-->>Client: Email "Commande confirmée"
+        API-->>Frontend: 201 Created + détails commande
+        Frontend-->>Client: Affiche confirmation
+    else Stock épuisé
+        API-->>Frontend: 400 Bad Request
+        Frontend-->>Client: Affiche erreur "Menu indisponible"
+    end
+
+    Note over Client, Mail: Phase 2 - Suivi de la commande
+
+    Client->>Frontend: Consulte ses commandes
+    Frontend->>API: GET /api/commandes (JWT)
+    API->>PG: Récupère les commandes du client
+    API-->>Frontend: Liste des commandes avec historique
+    Frontend-->>Client: Affiche timeline des statuts
+
+    Note over Client, Mail: Phase 3 - Workflow employé
+
+    actor Employe as Employé
+    Employe->>Frontend: Change le statut de la commande
+    Frontend->>API: PUT /api/commandes/:id/status (JWT + nouveau statut)
+    API->>PG: Vérifie la transition de statut valide
+    API->>PG: Met à jour statut + historique
+    API->>Mongo: Sync nouveau statut (async)
+
+    alt Statut = ATTENTE_RETOUR_MATERIEL
+        API->>Mail: Email "Retour matériel sous 10 jours"
+        Mail-->>Client: Email relance matériel
+    end
+
+    alt Statut = TERMINEE
+        API->>Mail: Email "Commande terminée - donnez votre avis"
+        Mail-->>Client: Email invitation avis
+    end
+
+    API-->>Frontend: Commande mise à jour
+    Frontend-->>Employe: Affiche nouveau statut
+```
+
+---
+
+## 12. Diagramme de classe (Backend NestJS)
+
+Ce diagramme montre l'architecture des modules, services et contrôleurs du backend.
+
+```mermaid
+classDiagram
+    class AppModule {
+        +imports: Module[]
+    }
+
+    class AuthModule {
+        +controllers: AuthController
+        +providers: AuthService, JwtStrategy
+    }
+
+    class AuthController {
+        +register(dto: RegisterDto)
+        +login(dto: LoginDto)
+        +forgotPassword(dto: ForgotPasswordDto)
+        +resetPassword(dto: ResetPasswordDto)
+        +getProfile(user: CurrentUser)
+    }
+
+    class AuthService {
+        -prisma: PrismaService
+        -jwtService: JwtService
+        -mailService: MailService
+        +register(dto: RegisterDto)
+        +login(dto: LoginDto)
+        +forgotPassword(email: string)
+        +resetPassword(token: string, password: string)
+    }
+
+    class MenuModule {
+        +controllers: MenuController
+        +providers: MenuService
+    }
+
+    class MenuService {
+        -prisma: PrismaService
+        +findAll(filters: MenuFilterDto)
+        +findOne(id: number)
+        +create(dto: CreateMenuDto)
+        +update(id: number, dto: UpdateMenuDto)
+        +remove(id: number)
+    }
+
+    class CommandeModule {
+        +controllers: CommandeController
+        +providers: CommandeService
+    }
+
+    class CommandeService {
+        -prisma: PrismaService
+        -mailService: MailService
+        -mongoService: MongoService
+        +create(dto: CreateCommandeDto, userId: number)
+        +findAll(userId: number, role: string)
+        +findOne(id: number, userId: number, role: string)
+        +update(id: number, dto: UpdateCommandeDto, userId: number)
+        +cancel(id: number, userId: number)
+        +updateStatut(id: number, dto: UpdateStatutDto)
+    }
+
+    class AdminModule {
+        +controllers: AdminController
+        +providers: AdminService
+    }
+
+    class AdminService {
+        -prisma: PrismaService
+        -mailService: MailService
+        -mongoService: MongoService
+        +getOrderStats()
+        +getRevenueStats(filters)
+        +createEmployee(dto: CreateEmployeeDto)
+        +disableEmployee(id: number)
+        +syncOrderStats()
+    }
+
+    class MongoModule {
+        +providers: MongoService
+        +exports: MongoService
+    }
+
+    class MongoService {
+        -orderStatModel: Model~OrderStat~
+        +upsertOrderStat(data)
+        +getOrderStatsByMenu()
+        +getRevenueStats(filters)
+        +bulkUpsert(data[])
+    }
+
+    class PrismaModule {
+        +providers: PrismaService
+        +exports: PrismaService
+    }
+
+    class PrismaService {
+        +onModuleInit()
+        +onModuleDestroy()
+    }
+
+    class MailModule {
+        +providers: MailService
+        +exports: MailService
+    }
+
+    class MailService {
+        -transporter: Transporter
+        +sendWelcomeEmail(to, name)
+        +sendResetPasswordEmail(to, name, link)
+        +sendOrderConfirmationEmail(to, name, orderNum, total)
+        +sendMaterielReturnEmail(to, name, orderNum)
+        +sendOrderCompletedEmail(to, name, orderNum)
+        +sendEmployeeCreatedEmail(to, name, email)
+        +sendContactEmail(title, description, email)
+    }
+
+    class JwtAuthGuard {
+        +canActivate(context)
+    }
+
+    class RolesGuard {
+        +canActivate(context)
+    }
+
+    AppModule --> AuthModule
+    AppModule --> MenuModule
+    AppModule --> CommandeModule
+    AppModule --> AdminModule
+    AppModule --> MongoModule
+    AppModule --> PrismaModule
+    AppModule --> MailModule
+
+    AuthModule --> PrismaModule
+    AuthModule --> MailModule
+    MenuModule --> PrismaModule
+    CommandeModule --> PrismaModule
+    CommandeModule --> MailModule
+    CommandeModule --> MongoModule
+    AdminModule --> PrismaModule
+    AdminModule --> MailModule
+    AdminModule --> MongoModule
+
+    AuthModule ..> JwtAuthGuard
+    AuthModule ..> RolesGuard
+```
+
+---
+
+## 13. Base de donnees NoSQL - MongoDB Atlas
+
+### 13.1 Justification
+
+L'ECF exige l'utilisation d'une base de données NoSQL en complément du SQL. MongoDB Atlas a été choisi pour stocker les **statistiques agrégées** du dashboard admin :
+
+| Critère | PostgreSQL (SQL) | MongoDB (NoSQL) |
+|---------|-----------------|-----------------|
+| Usage | Données relationnelles (CRUD) | Statistiques agrégées |
+| Requêtes | JOIN complexes | Pipeline d'agrégation |
+| Flexibilité | Schéma strict | Schéma flexible |
+| Performance | Excellente pour CRUD | Excellente pour agrégations |
+
+### 13.2 Collection `order_stats`
+
+```javascript
+{
+  commandeId: 1,              // Référence PostgreSQL
+  menuId: 1,
+  menuTitre: "Menu Festif de Noël",
+  dateCommande: ISODate("2026-02-15T10:00:00Z"),
+  datePrestation: ISODate("2026-03-15T00:00:00Z"),
+  nombrePersonnes: 8,
+  prixMenu: 520.00,
+  prixLivraison: 0.00,
+  montantTotal: 520.00,
+  statut: "TERMINEE",
+  clientId: 3,
+  clientNom: "Marie Dupont"
+}
+```
+
+### 13.3 Pipelines d'agrégation
+
+**Statistiques par menu :**
+```javascript
+db.order_stats.aggregate([
+  { $group: {
+      _id: { menuId: "$menuId", menuTitre: "$menuTitre" },
+      totalCommandes: { $sum: 1 },
+      chiffreAffaires: { $sum: "$montantTotal" }
+  }},
+  { $sort: { chiffreAffaires: -1 } }
+])
+```
+
+### 13.4 Synchronisation
+
+Les données sont synchronisées de PostgreSQL vers MongoDB de manière **non-bloquante** :
+- A la création d'une commande → `upsertOrderStat()` (async, .catch silencieux)
+- A chaque changement de statut → `upsertOrderStat()` (async, .catch silencieux)
+- Synchronisation complète manuelle → `POST /api/admin/stats/sync`
