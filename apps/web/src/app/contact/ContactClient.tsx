@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Send, MapPin, Phone, Mail, Clock, CheckCircle } from 'lucide-react';
 import { contact } from '@/lib/api';
@@ -95,7 +96,17 @@ export default function ContactClient() {
 
           {/* Info */}
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 0.1 }}>
-            <div className="bg-white rounded-xl border border-slate-200 p-8 space-y-6">
+            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <div className="relative h-48">
+                <Image
+                  src="/images/contact.jpg"
+                  alt="Devanture Vite & Gourmand à Bordeaux"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+              </div>
+              <div className="p-8 space-y-6">
               <h2 className="text-xl font-heading font-bold text-slate-900">Nos coordonnées</h2>
 
               <div className="space-y-4">
@@ -140,6 +151,7 @@ export default function ContactClient() {
                     <p className="text-sm text-slate-400">Dimanche fermé</p>
                   </div>
                 </div>
+              </div>
               </div>
             </div>
           </motion.div>

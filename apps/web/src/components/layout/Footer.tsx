@@ -1,7 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import { ChefHat, MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -11,7 +12,13 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <ChefHat className="h-7 w-7 text-primary-400" />
+              <Image
+                src="/images/logo_vite_e_gourmand.png"
+                alt="Vite & Gourmand"
+                width={96}
+                height={96}
+                className="h-10 w-10 brightness-0 invert"
+              />
               <span className="text-xl font-heading font-bold text-white">
                 Vite & Gourmand
               </span>

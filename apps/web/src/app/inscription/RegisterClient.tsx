@@ -4,7 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { UserPlus, ChefHat, CheckCircle } from 'lucide-react';
+import Image from 'next/image';
+import { UserPlus, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -81,7 +82,13 @@ export default function RegisterClient() {
         className="w-full max-w-md mx-4"
       >
         <div className="text-center mb-8">
-          <ChefHat className="h-12 w-12 text-primary-600 mx-auto mb-4" />
+          <Image
+            src="/images/logo_vite_e_gourmand.png"
+            alt="Vite & Gourmand"
+            width={128}
+            height={128}
+            className="h-20 w-20 mx-auto mb-4"
+          />
           <h1 className="text-2xl font-heading font-bold text-slate-900">Créer un compte</h1>
           <p className="text-sm text-slate-500 mt-2">
             Déjà inscrit ?{' '}

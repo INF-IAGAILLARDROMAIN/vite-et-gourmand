@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 
@@ -8,18 +9,21 @@ const TESTIMONIALS = [
     name: 'Marie Dupont',
     event: 'Mariage',
     note: 5,
+    avatar: '/images/testimonials/marie-dupont.jpg',
     text: 'Un service impeccable du début à la fin. Les invités ont adoré les plats ! Le menu était raffiné et la livraison parfaitement ponctuelle.',
   },
   {
     name: 'Pierre Martin',
     event: 'Séminaire entreprise',
     note: 5,
+    avatar: '/images/testimonials/pierre-martin.jpg',
     text: 'Nous avons fait appel à Vite & Gourmand pour notre séminaire annuel. Qualité irréprochable, équipe réactive. Je recommande vivement.',
   },
   {
     name: 'Sophie Laurent',
     event: 'Anniversaire',
     note: 4,
+    avatar: '/images/testimonials/sophie-laurent.jpg',
     text: 'Un régal pour les papilles ! Le menu champêtre était parfait pour l\'anniversaire de ma fille. Tout le monde a été bluffé.',
   },
 ];
@@ -62,9 +66,18 @@ export default function TestimonialsSection() {
                 ))}
               </div>
 
-              <div>
-                <p className="font-semibold text-slate-900 text-sm">{t.name}</p>
-                <p className="text-xs text-slate-500">{t.event}</p>
+              <div className="flex items-center gap-3">
+                <Image
+                  src={t.avatar}
+                  alt={t.name}
+                  width={96}
+                  height={96}
+                  className="rounded-full object-cover w-10 h-10"
+                />
+                <div>
+                  <p className="font-semibold text-slate-900 text-sm">{t.name}</p>
+                  <p className="text-xs text-slate-500">{t.event}</p>
+                </div>
               </div>
             </motion.div>
           ))}

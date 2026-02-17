@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChefHat, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, X, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
@@ -29,7 +30,14 @@ export default function Header() {
               whileHover={{ rotate: 15 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
-              <ChefHat className="h-8 w-8 text-primary-600" />
+              <Image
+                src="/images/logo_vite_e_gourmand.png"
+                alt="Vite & Gourmand"
+                width={96}
+                height={96}
+                className="h-12 w-12"
+                priority
+              />
             </motion.div>
             <span className="text-xl font-heading font-bold text-primary-800">
               Vite & Gourmand

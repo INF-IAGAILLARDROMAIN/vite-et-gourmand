@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Users, Euro, AlertTriangle, ShoppingCart, Utensils } from 'lucide-react';
@@ -65,11 +66,20 @@ export default function MenuDetailClient({ menuId }: { menuId: number }) {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           {/* Hero image */}
-          <div className="h-64 sm:h-80 bg-gradient-to-br from-primary-100 to-primary-200 rounded-xl overflow-hidden flex items-center justify-center mb-8">
+          <div className="relative h-64 sm:h-80 bg-gradient-to-br from-primary-100 to-primary-200 rounded-xl overflow-hidden mb-8">
             {menu.images?.[0] ? (
-              <img src={menu.images[0].url} alt={menu.images[0].alt || menu.titre} className="w-full h-full object-cover" />
+              <Image
+                src={menu.images[0].url}
+                alt={menu.images[0].alt || menu.titre}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 896px"
+                priority
+              />
             ) : (
-              <span className="text-7xl">🍽️</span>
+              <div className="flex items-center justify-center h-full">
+                <span className="text-7xl">🍽️</span>
+              </div>
             )}
           </div>
 

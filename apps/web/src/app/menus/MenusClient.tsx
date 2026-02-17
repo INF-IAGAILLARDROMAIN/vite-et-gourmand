@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Search, Filter, Users, Euro, ArrowRight, X } from 'lucide-react';
@@ -140,16 +141,20 @@ export default function MenusClient() {
                 transition={{ duration: 0.3, delay: i * 0.05 }}
               >
                 <Card className="flex flex-col h-full">
-                  {/* Image placeholder */}
-                  <div className="h-48 bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
+                  {/* Image */}
+                  <div className="relative h-48 bg-gradient-to-br from-primary-100 to-primary-200 overflow-hidden">
                     {menu.images?.[0] ? (
-                      <img
+                      <Image
                         src={menu.images[0].url}
                         alt={menu.images[0].alt || menu.titre}
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     ) : (
-                      <span className="text-5xl">🍽️</span>
+                      <div className="flex items-center justify-center h-full">
+                        <span className="text-5xl">🍽️</span>
+                      </div>
                     )}
                   </div>
 

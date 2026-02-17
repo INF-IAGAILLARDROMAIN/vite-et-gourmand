@@ -235,6 +235,17 @@ async function main() {
     ],
   });
 
+  // ==================== MENU IMAGES ====================
+  await prisma.menuImage.createMany({
+    data: [
+      { menuId: menuNoel.id, url: '/images/menus/menu-noel.jpg', alt: 'Menu Festif de Noël - Foie gras, filet de boeuf en croûte, bûche' },
+      { menuId: menuPaques.id, url: '/images/menus/menu-paques.jpg', alt: 'Menu Printanier de Pâques - Tartare de saumon, suprême de volaille, tarte Tatin' },
+      { menuId: menuClassique.id, url: '/images/menus/menu-classique.jpg', alt: 'Menu Classique Gourmand - Soupe à l\'oignon, magret de canard, crème brûlée' },
+      { menuId: menuVegetarien.id, url: '/images/menus/menu-vegetarien.jpg', alt: 'Menu Végétarien Découverte - Bruschetta, risotto, panna cotta' },
+      { menuId: menuGrandEvent.id, url: '/images/menus/menu-grand-evenement.jpg', alt: 'Menu Grand Événement - Gala prestige avec 6 plats' },
+    ],
+  });
+
   // ==================== HORAIRES ====================
   await prisma.horaire.createMany({
     data: [

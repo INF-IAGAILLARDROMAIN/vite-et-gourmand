@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
@@ -13,9 +14,16 @@ export default function CTASection() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary-600 to-primary-800 px-8 py-16 sm:px-16 text-center"
+          className="relative overflow-hidden rounded-2xl px-8 py-16 sm:px-16 text-center"
         >
-          <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
+          <Image
+            src="/images/cta-bg.jpg"
+            alt="Cuisine du chef traiteur"
+            fill
+            className="object-cover"
+            sizes="(max-width: 1280px) 100vw, 1280px"
+          />
+          <div className="absolute inset-0 bg-primary-900/75" />
           <div className="relative">
             <h2 className="text-3xl sm:text-4xl font-heading font-bold text-white">
               Prêt à régaler vos invités ?
