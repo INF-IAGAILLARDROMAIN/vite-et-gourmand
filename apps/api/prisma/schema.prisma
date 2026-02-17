@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -11,4 +5,248 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ROLES & UTILISATEURS ====================
+
+model Role {
+  id      Int    @id @default(autoincrement()) @map("role_id")
+  libelle String @unique @db.VarChar(50)
+
+  utilisateurs Utilisateur[]
+
+  @@map("role")
+}
+
+model Utilisateur {
+  id              Int      @id @default(autoincrement()) @map("utilisateur_id")
+  email           String   @unique @db.VarChar(50)
+  password        String   @db.VarChar(255)
+  nom             String   @db.VarChar(50)
+  prenom          String   @db.VarChar(50)
+  telephone       String   @db.VarChar(20)
+  adressePostale  String   @map("adresse_postale") @db.VarChar(255)
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  roleId Int  @map("role_id")
+  role   Role @relation(fields: [roleId], references: [id])
+
+  commandes Commande[]
+  avis      Avis[]
+
+  @@map("utilisateur")
+}
+
+// ==================== MENUS ====================
+
+model Menu {
+  id                    Int    @id @default(autoincrement()) @map("menu_id")
+  titre                 String @db.VarChar(100)
+  nombrePersonneMinimale Int   @map("nombre_personne_minimale")
+  prixParPersonne       Float  @map("prix_par_personne")
+  description           String @db.Text
+  quantiteRestante      Int    @map("quantite_restante")
+  conditions            String? @db.Text
+
+  themes   MenuTheme[]
+  regimes  MenuRegime[]
+  plats    MenuPlat[]
+  images   MenuImage[]
+  commandes Commande[]
+
+  @@map("menu")
+}
+
+model MenuImage {
+  id     Int    @id @default(autoincrement())
+  url    String @db.VarChar(500)
+  alt    String? @db.VarChar(255)
+
+  menuId Int  @map("menu_id")
+  menu   Menu @relation(fields: [menuId], references: [id], onDelete: Cascade)
+
+  @@map("menu_image")
+}
+
+// ==================== THEMES & REGIMES ====================
+
+model Theme {
+  id      Int    @id @default(autoincrement()) @map("theme_id")
+  libelle String @unique @db.VarChar(50)
+
+  menus MenuTheme[]
+
+  @@map("theme")
+}
+
+model Regime {
+  id      Int    @id @default(autoincrement()) @map("regime_id")
+  libelle String @unique @db.VarChar(50)
+
+  menus MenuRegime[]
+
+  @@map("regime")
+}
+
+// Tables de liaison menu <-> theme / regime
+model MenuTheme {
+  menuId  Int @map("menu_id")
+  themeId Int @map("theme_id")
+
+  menu  Menu  @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  theme Theme @relation(fields: [themeId], references: [id], onDelete: Cascade)
+
+  @@id([menuId, themeId])
+  @@map("menu_theme")
+}
+
+model MenuRegime {
+  menuId   Int @map("menu_id")
+  regimeId Int @map("regime_id")
+
+  menu   Menu   @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  regime Regime @relation(fields: [regimeId], references: [id], onDelete: Cascade)
+
+  @@id([menuId, regimeId])
+  @@map("menu_regime")
+}
+
+// ==================== PLATS & ALLERGENES ====================
+
+model Plat {
+  id        Int      @id @default(autoincrement()) @map("plat_id")
+  titrePlat String   @map("titre_plat") @db.VarChar(100)
+  photo     String?  @db.VarChar(500)
+  type      PlatType
+
+  allergenes PlatAllergene[]
+  menus      MenuPlat[]
+
+  @@map("plat")
+}
+
+enum PlatType {
+  ENTREE
+  PLAT
+  DESSERT
+}
+
+model Allergene {
+  id      Int    @id @default(autoincrement()) @map("allergene_id")
+  libelle String @unique @db.VarChar(50)
+
+  plats PlatAllergene[]
+
+  @@map("allergene")
+}
+
+// Tables de liaison
+model MenuPlat {
+  menuId Int @map("menu_id")
+  platId Int @map("plat_id")
+
+  menu Menu @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  plat Plat @relation(fields: [platId], references: [id], onDelete: Cascade)
+
+  @@id([menuId, platId])
+  @@map("menu_plat")
+}
+
+model PlatAllergene {
+  platId      Int @map("plat_id")
+  allergeneId Int @map("allergene_id")
+
+  plat      Plat      @relation(fields: [platId], references: [id], onDelete: Cascade)
+  allergene Allergene @relation(fields: [allergeneId], references: [id], onDelete: Cascade)
+
+  @@id([platId, allergeneId])
+  @@map("plat_allergene")
+}
+
+// ==================== COMMANDES ====================
+
+model Commande {
+  id                 Int             @id @default(autoincrement())
+  numeroCommande     String          @unique @map("numero_commande") @db.VarChar(50)
+  dateCommande       DateTime        @default(now()) @map("date_commande")
+  datePrestation     DateTime        @map("date_prestation")
+  heurePrestation    String          @map("heure_prestation") @db.VarChar(10)
+  adresse            String          @db.VarChar(255)
+  prixMenu           Float           @map("prix_menu")
+  nombrePersonnes    Int             @map("nombre_personnes")
+  prixLivraison      Float           @map("prix_livraison")
+  statut             CommandeStatut  @default(RECUE)
+  validationMateriel Boolean         @default(false) @map("validation_materiel")
+  motifAnnulation    String?         @map("motif_annulation") @db.Text
+  modeContact        String?         @map("mode_contact") @db.VarChar(20)
+
+  utilisateurId Int         @map("utilisateur_id")
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+
+  menuId Int  @map("menu_id")
+  menu   Menu @relation(fields: [menuId], references: [id])
+
+  avis             Avis?
+  historiqueStatuts CommandeHistorique[]
+
+  @@map("commande")
+}
+
+enum CommandeStatut {
+  RECUE
+  ACCEPTEE
+  EN_PREPARATION
+  EN_LIVRAISON
+  LIVREE
+  ATTENTE_RETOUR_MATERIEL
+  TERMINEE
+  ANNULEE
+}
+
+model CommandeHistorique {
+  id        Int            @id @default(autoincrement())
+  statut    CommandeStatut
+  date      DateTime       @default(now())
+
+  commandeId Int      @map("commande_id")
+  commande   Commande @relation(fields: [commandeId], references: [id], onDelete: Cascade)
+
+  @@map("commande_historique")
+}
+
+// ==================== AVIS ====================
+
+model Avis {
+  id          Int        @id @default(autoincrement()) @map("avis_id")
+  note        Int
+  description String     @db.Text
+  statut      AvisStatut @default(EN_ATTENTE)
+  createdAt   DateTime   @default(now()) @map("created_at")
+
+  utilisateurId Int         @map("utilisateur_id")
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+
+  commandeId Int      @unique @map("commande_id")
+  commande   Commande @relation(fields: [commandeId], references: [id])
+
+  @@map("avis")
+}
+
+enum AvisStatut {
+  EN_ATTENTE
+  VALIDE
+  REFUSE
+}
+
+// ==================== HORAIRES ====================
+
+model Horaire {
+  id             Int    @id @default(autoincrement()) @map("horaire_id")
+  jour           String @unique @db.VarChar(20)
+  heureOuverture String @map("heure_ouverture") @db.VarChar(10)
+  heureFermeture String @map("heure_fermeture") @db.VarChar(10)
+
+  @@map("horaire")
 }
