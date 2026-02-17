@@ -168,7 +168,7 @@ Implémentation via un décorateur `@Roles()` et un guard `RolesGuard` NestJS.
 ### 3.3 Validation des données
 
 - Validation sur tous les DTOs avec `class-validator` (email valide, longueurs, formats...)
-- Politique de mot de passe fort : minimum 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
+- Politique de mot de passe fort : minimum 10 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
 - Protection anti-énumération : la route `forgot-password` retourne toujours un succès, même si l'email n'existe pas
 
 ### 3.4 CORS
@@ -202,7 +202,7 @@ Chaque menu affiche sa composition complète (entrées, plats, desserts) avec le
 3. Le système calcule le prix :
    - Prix du menu = prix/personne x nombre de personnes
    - Livraison = 0€ (Bordeaux centre) à 20€ (périphérie)
-   - Réduction de 5% si >= 50 personnes
+   - Réduction de 10% si le nombre de personnes dépasse le minimum du menu de 5 ou plus
 4. Validation et confirmation par email
 
 ### 4.3 Workflow des commandes

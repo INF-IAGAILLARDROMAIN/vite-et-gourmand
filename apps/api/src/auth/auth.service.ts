@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -26,6 +27,28 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
   ) {}
+
+  async getProfile(userId: number) {
+    const user = await this.prisma.utilisateur.findUnique({
+      where: { id: userId },
+      include: { role: true },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Utilisateur non trouvé');
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      nom: user.nom,
+      prenom: user.prenom,
+      telephone: user.telephone,
+      adressePostale: user.adressePostale,
+      role: user.role.libelle,
+      createdAt: user.createdAt,
+    };
+  }
 
   async register(dto: RegisterDto) {
     const existingUser = await this.prisma.utilisateur.findUnique({

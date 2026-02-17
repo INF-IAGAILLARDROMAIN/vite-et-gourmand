@@ -90,7 +90,7 @@ vite-et-gourmand/
 ### Espace client (utilisateur connecté)
 - Commander un menu (choix date, heure, adresse, nombre de personnes)
 - Calcul automatique du prix (menu + livraison selon distance)
-- Réduction de 5% à partir de 50 personnes
+- Réduction de 10% si le nombre de personnes dépasse le minimum du menu de 5 ou plus
 - Suivi des commandes avec historique des statuts
 - Annulation de commande (si statut le permet)
 - Dépôt d'avis après livraison
@@ -215,7 +215,7 @@ Le frontend est accessible sur `http://localhost:3001`.
 |---------|-------|-------------|------|
 | POST | `/auth/register` | Inscription | Non |
 | POST | `/auth/login` | Connexion | Non |
-| GET | `/auth/profile` | Profil connecté | JWT |
+| GET | `/auth/profile` | Profil utilisateur connecté | JWT |
 | POST | `/auth/forgot-password` | Demande reset mot de passe | Non |
 | POST | `/auth/reset-password` | Reset mot de passe | Non |
 
@@ -224,9 +224,9 @@ Le frontend est accessible sur `http://localhost:3001`.
 |---------|-------|-------------|------|
 | GET | `/menus` | Liste (filtres: theme, regime, prixMax) | Non |
 | GET | `/menus/:id` | Détail d'un menu | Non |
-| POST | `/menus` | Créer un menu | Admin |
-| PATCH | `/menus/:id` | Modifier un menu | Admin |
-| DELETE | `/menus/:id` | Supprimer un menu | Admin |
+| POST | `/menus` | Créer un menu | Employé/Admin |
+| PUT | `/menus/:id` | Modifier un menu | Employé/Admin |
+| DELETE | `/menus/:id` | Supprimer un menu | Employé/Admin |
 
 ### Commandes (`/api/commandes`)
 | Methode | Route | Description | Auth |
@@ -234,8 +234,8 @@ Le frontend est accessible sur `http://localhost:3001`.
 | GET | `/commandes` | Mes commandes / toutes (admin) | JWT |
 | GET | `/commandes/:id` | Détail d'une commande | JWT |
 | POST | `/commandes` | Créer une commande | JWT |
-| PATCH | `/commandes/:id/statut` | Avancer le statut | Employe+ |
-| PATCH | `/commandes/:id/annuler` | Annuler une commande | JWT |
+| PUT | `/commandes/:id/status` | Avancer le statut | Employe+ |
+| DELETE | `/commandes/:id` | Annuler une commande | JWT |
 
 ### Avis (`/api/avis`)
 | Methode | Route | Description | Auth |
@@ -243,13 +243,13 @@ Le frontend est accessible sur `http://localhost:3001`.
 | GET | `/avis` | Avis validés (public) | Non |
 | GET | `/avis/pending` | Avis en attente | Employe+ |
 | POST | `/avis` | Créer un avis | JWT |
-| PATCH | `/avis/:id/validate` | Valider/refuser un avis | Employe+ |
+| PUT | `/avis/:id/validate` | Valider/refuser un avis | Employe+ |
 
 ### Autres endpoints
 | Methode | Route | Description | Auth |
 |---------|-------|-------------|------|
 | GET | `/horaires` | Liste des horaires | Non |
-| PATCH | `/horaires/:id` | Modifier un horaire | Admin |
+| PUT | `/horaires/:id` | Modifier un horaire | Employé/Admin |
 | POST | `/contact` | Envoyer un message | Non |
 | GET | `/admin/stats/orders` | Statistiques commandes | Admin |
 | POST | `/admin/employees` | Créer un employé | Admin |
@@ -261,7 +261,7 @@ Le frontend est accessible sur `http://localhost:3001`.
 - Contrôle d'accès par rôles (RBAC) via guards NestJS
 - Validation des entrées avec class-validator sur tous les DTOs
 - Protection CORS configurée
-- Mot de passe fort requis (min. 8 car., majuscule, minuscule, chiffre, caractère spécial)
+- Mot de passe fort requis (min. 10 car., majuscule, minuscule, chiffre, caractère spécial)
 - Anti-énumération sur la route de mot de passe oublié
 
 ## Auteur
