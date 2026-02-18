@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Inter } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/layout/Header';
@@ -17,6 +17,12 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
+export const viewport: Viewport = {
+  themeColor: '#d97706',
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: {
     default: 'Vite & Gourmand | Traiteur Événementiel Bordeaux',
@@ -33,8 +39,14 @@ export const metadata: Metadata = {
     'repas',
     'livraison',
     'menu',
+    'traiteur Bordeaux',
+    'traiteur événementiel Gironde',
   ],
   authors: [{ name: 'Vite & Gourmand' }],
+  metadataBase: new URL('https://vite-et-gourmand-rust.vercel.app'),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
@@ -67,6 +79,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={`${playfair.variable} ${inter.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://vite-et-gourmand-api.vercel.app" />
+        <link rel="dns-prefetch" href="https://vite-et-gourmand-api.vercel.app" />
+      </head>
       <body className="antialiased min-h-screen flex flex-col">
         <AuthProvider>
           <Header />

@@ -4,6 +4,7 @@ import ResetPasswordClient from './ResetPasswordClient';
 
 export const metadata: Metadata = {
   title: 'Réinitialiser le mot de passe',
+  description: 'Choisissez un nouveau mot de passe pour votre compte Vite & Gourmand.',
 };
 
 export default function ResetPasswordPage() {
