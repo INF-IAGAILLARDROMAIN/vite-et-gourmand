@@ -234,3 +234,33 @@ Palette chaude pour les arrière-plans, évitant le blanc froid.
 | `Phone` / `Mail` | Contact |
 | `CheckCircle` / `XCircle` | Validation / Refus |
 | `ArrowRight` / `ArrowLeft` | Navigation |
+
+---
+
+## 9. Maquettes
+
+### 9.1 Maquettes Desktop (1440px)
+
+Les maquettes ci-dessous representent les trois pages principales du site en resolution desktop (1440x900).
+
+**Page d'accueil** (`/`) :
+![Desktop - Page d'accueil](maquettes/desktop-accueil.png)
+
+**Vue globale des menus** (`/menus`) :
+![Desktop - Vue globale menus](maquettes/desktop-menus.png)
+
+**Detail d'un menu** (`/menus/1`) :
+![Desktop - Detail menu](maquettes/desktop-detail-menu.png)
+
+### 9.2 Maquettes Mobile (375px - iPhone)
+
+Les memes pages en resolution mobile (375x812, retina 2x).
+
+**Page d'accueil** (`/`) :
+![Mobile - Page d'accueil](maquettes/mobile-accueil.png)
+
+**Vue globale des menus** (`/menus`) :
+![Mobile - Vue globale menus](maquettes/mobile-menus.png)
+
+**Detail d'un menu** (`/menus/1`) :
+![Mobile - Detail menu](maquettes/mobile-detail-menu.png)
