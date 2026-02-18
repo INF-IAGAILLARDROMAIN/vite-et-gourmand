@@ -44,10 +44,11 @@ Le projet a été découpé en **10 phases** correspondant aux grands blocs fonc
 | 5 | Frontend Next.js (22 pages, composants, auth) | 20h | Terminé |
 | 6 | Emails (7 templates Nodemailer) | 2h | Terminé |
 | 7 | Déploiement (Vercel, Railway, Neon, Atlas) | 3h | Terminé |
+| 7bis | **SEO & Optimisation performance** | 3h | Terminé |
 | 8 | Documentation & Livrables | 7h | Terminé |
 | 9 | Copie à rendre | 3h | Terminé |
 
-**Durée totale estimée : ~58h** (sur 70h allouées)
+**Durée totale estimée : ~61h** (sur 70h allouées)
 
 ---
 
@@ -143,6 +144,33 @@ Les messages de commit suivent un format sémantique :
 | **PostgreSQL (Neon)** | Base de données relationnelle |
 | **MongoDB Atlas** | Base de données NoSQL (statistiques) |
 | **Postman** | Tests manuels des endpoints API |
-| **Chrome DevTools** | Debug frontend et réseau |
+| **Chrome DevTools** | Debug frontend, réseau et audit performance (Lighthouse) |
 | **Vercel** | Hébergement frontend |
 | **Vercel (serverless)** | Hébergement backend API |
+
+---
+
+## 6. Phase 7bis — SEO & Optimisation performance
+
+Cette phase a été ajoutée après le déploiement initial pour garantir un bon référencement sur Google et des temps de chargement optimaux. C'est un enjeu important pour un site de traiteur événementiel : les clients potentiels recherchent « traiteur Bordeaux » ou « traiteur événementiel Gironde » et le site doit apparaître dans les premiers résultats.
+
+### 6.1 Taches realisees
+
+| Tâche | Fichier(s) modifié(s) | Description |
+|-------|----------------------|-------------|
+| Métadonnées dynamiques menus | `apps/web/src/app/menus/[id]/page.tsx` | Ajout de `generateMetadata()` pour générer title, description et OpenGraph depuis l'API pour chaque fiche menu |
+| Sitemap dynamique | `apps/web/src/app/sitemap.ts` | Le sitemap inclut désormais les pages menus dynamiques en interrogeant l'API (revalidation toutes les heures) |
+| Preconnect API | `apps/web/src/app/layout.tsx` | Ajout de `<link rel="preconnect">` et `<link rel="dns-prefetch">` vers le domaine API pour anticiper les connexions |
+| Cache headers | `apps/web/next.config.ts` | Headers HTTP `Cache-Control: immutable` (1 an) sur images et assets statiques |
+| Format WebP | `apps/web/next.config.ts` | Activation du format WebP automatique pour réduire le poids des images de 30-50% |
+| JSON-LD enrichi | `apps/web/src/app/page.tsx` | Schémas FoodEstablishment (étoiles, horaires, géolocalisation) + WebSite pour le Knowledge Panel Google |
+| Viewport thème mobile | `apps/web/src/app/layout.tsx` | Export `viewport` avec `themeColor` pour personnaliser la barre de navigation mobile |
+| Descriptions manquantes | Pages mot-de-passe-oublie, reset-password | Ajout de meta descriptions sur les pages d'authentification |
+
+### 6.2 Resultats mesures (Chrome DevTools Performance Trace)
+
+| Métrique | Score | Seuil Google « Bon » | Verdict |
+|----------|-------|---------------------|---------|
+| **LCP** (Largest Contentful Paint) | **1 026 ms** | < 2 500 ms | Excellent |
+| **CLS** (Cumulative Layout Shift) | **0.00** | < 0.1 | Parfait |
+| **TTFB** (Time To First Byte) | **33 ms** | < 800 ms | Excellent |

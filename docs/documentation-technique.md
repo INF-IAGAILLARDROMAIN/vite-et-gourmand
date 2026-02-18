@@ -297,23 +297,90 @@ Voici les principaux choix techniques que j'ai faits et pourquoi.
 
 ## 6. SEO et performance
 
-J'ai porté une attention particulière au référencement et aux performances, car un site de traiteur doit être bien positionné sur Google et charger rapidement.
+Le référencement naturel (SEO) et la performance web sont des enjeux majeurs pour un site de traiteur événementiel. Un client potentiel qui cherche « traiteur Bordeaux » ou « traiteur événementiel Gironde » sur Google doit pouvoir trouver Vite & Gourmand dans les premiers résultats. De même, un site qui met plus de 3 secondes à charger perd plus de 50% de ses visiteurs (source : Google Web Vitals). J'ai donc consacré une attention particulière à ces deux aspects tout au long du développement.
 
-### 6.1 Optimisations SEO
+### 6.1 Stratégie SEO globale
 
-- **Métadonnées** : title templates, descriptions OpenGraph sur toutes les pages
-- **Données structurées** : schéma JSON-LD `Restaurant` sur la page d'accueil
-- **Sitemap XML** : généré dynamiquement (`/sitemap.xml`)
-- **Robots.txt** : pages admin et compte exclues de l'indexation
-- **URLs propres** : routes françaises lisibles (`/menus`, `/contact`, `/mentions-legales`)
+La stratégie SEO mise en place repose sur quatre piliers complémentaires :
+
+**1. SEO technique (crawlabilité et indexation)**
+- **Sitemap XML dynamique** (`/sitemap.xml`) : généré automatiquement par Next.js, il inclut toutes les pages statiques ET les pages de menus dynamiques (`/menus/1`, `/menus/2`, etc.) en interrogeant l'API au build. Le sitemap se revalide toutes les heures (`revalidate: 3600`) pour refléter les nouveaux menus ajoutés
+- **Robots.txt** (`/robots.txt`) : autorise l'indexation de toutes les pages publiques et bloque les espaces privés (`/admin/*`, `/mon-compte/*`) pour éviter le crawl inutile
+- **URL canonique** : configurée via `alternates.canonical` dans le layout Next.js pour éviter le contenu dupliqué
+- **URLs propres en français** : routes sémantiques lisibles (`/menus`, `/contact`, `/mentions-legales`, `/connexion`) plutôt que des identifiants techniques
+
+**2. SEO on-page (contenu et métadonnées)**
+- **Title template** : chaque page hérite d'un format cohérent `%s | Vite & Gourmand` (ex : « Menu Festif de Noël | Vite & Gourmand »)
+- **Meta descriptions** : uniques sur chaque page, rédigées pour le clic (150-160 caractères), incluant les mots-clés cibles
+- **Métadonnées dynamiques** (`generateMetadata`) : sur les pages `/menus/[id]`, les balises title, description et OpenGraph sont générées dynamiquement depuis les données de l'API. Chaque fiche menu a ses propres métadonnées uniques
+- **Mots-clés ciblés** : « traiteur », « Bordeaux », « événementiel », « mariage », « séminaire », « traiteur événementiel Gironde »
+- **Balise `lang="fr"`** : indique aux moteurs que le contenu est en français
+- **HTML sémantique** : utilisation de `<header>`, `<main>`, `<footer>`, `<nav>`, `<section>`, `<article>` pour structurer le contenu
+
+**3. Données structurées (JSON-LD)**
+
+J'ai implémenté deux schémas JSON-LD sur la page d'accueil pour enrichir l'affichage dans les résultats Google (rich snippets) :
+
+```json
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "FoodEstablishment",
+    "name": "Vite & Gourmand",
+    "description": "Traiteur événementiel à Bordeaux...",
+    "servesCuisine": "French",
+    "address": { "@type": "PostalAddress", "addressLocality": "Bordeaux", "postalCode": "33000" },
+    "geo": { "@type": "GeoCoordinates", "latitude": 44.8378, "longitude": -0.5792 },
+    "telephone": "+33556000000",
+    "priceRange": "€€",
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "3", "bestRating": "5" },
+    "openingHoursSpecification": [ /* Horaires lundi-samedi */ ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Vite & Gourmand",
+    "url": "https://vite-et-gourmand-rust.vercel.app"
+  }
+]
+```
+
+- **FoodEstablishment** : permet l'affichage des étoiles, horaires, adresse et téléphone directement dans Google
+- **AggregateRating** : affiche la note moyenne (4.8/5) avec le nombre d'avis dans les résultats de recherche
+- **GeoCoordinates** : positionne l'entreprise sur Google Maps
+- **OpeningHoursSpecification** : affiche les horaires d'ouverture dans le Knowledge Panel
+- **WebSite** : déclare le site pour le Knowledge Panel Google
+
+**4. SEO social (OpenGraph et Twitter Cards)**
+- **OpenGraph** : balises `og:title`, `og:description`, `og:image`, `og:locale` sur toutes les pages pour un affichage optimal lors du partage sur Facebook, LinkedIn, etc.
+- **Twitter Cards** : `summary_large_image` pour un affichage visuel sur Twitter/X
+- **Image OG** : image dédiée 1200x630px (`/images/og-image.jpg`) optimisée pour le partage social
 
 ### 6.2 Optimisations de performance
 
-- **Polices** : chargement optimisé via `next/font/google` (auto-hébergées, pas de requête externe)
-- **Images** : composant `next/image` avec lazy loading et optimisation automatique
-- **Animations** : Framer Motion utilise les propriétés CSS `transform` et `opacity` (GPU-accelerated)
-- **Code splitting** : automatique par route avec Next.js App Router
-- **Tree shaking** : Lucide React n'inclut que les icônes importées
+Les résultats mesurés avec Chrome DevTools Performance (trace en production) sont excellents :
+
+| Métrique | Score | Seuil Google | Verdict |
+|----------|-------|-------------|---------|
+| **LCP** (Largest Contentful Paint) | **1 026 ms** | < 2 500 ms | Excellent |
+| **CLS** (Cumulative Layout Shift) | **0.00** | < 0.1 | Parfait |
+| **TTFB** (Time To First Byte) | **33 ms** | < 800 ms | Excellent |
+
+**Détail des optimisations implémentées :**
+
+- **Polices auto-hébergées** : chargement via `next/font/google` (Inter + Playfair Display) avec `display: 'swap'`. Les polices sont servies depuis le même domaine que l'application, éliminant les requêtes externes vers Google Fonts et réduisant le TTFB
+- **Images optimisées** : format **WebP** automatique via Next.js (`images.formats: ['image/webp']`), réduisant le poids des images de 30-50% par rapport au JPEG. L'image hero est servie en WebP avec compression automatique
+- **Cache agressif** : headers HTTP `Cache-Control: public, max-age=31536000, immutable` (1 an) sur les images (`/images/*`) et les assets statiques (`/_next/static/*`), confirmé en production via les headers de réponse Vercel
+- **Preconnect API** : `<link rel="preconnect">` et `<link rel="dns-prefetch">` vers le domaine API (`vite-et-gourmand-api.vercel.app`) pour anticiper la résolution DNS et l'établissement de la connexion TLS
+- **Viewport et thème mobile** : export `viewport` Next.js avec `themeColor: '#d97706'` pour personnaliser la barre de navigation mobile (Chrome, Safari)
+- **Animations GPU-accelerated** : Framer Motion utilise exclusivement les propriétés `transform` et `opacity`, composées par le GPU sans déclencher de layout/repaint
+- **Code splitting automatique** : chaque route Next.js génère un bundle JavaScript indépendant, le navigateur ne charge que le code nécessaire à la page courante
+- **Tree shaking** : Lucide React n'inclut dans le bundle final que les icônes effectivement importées
+- **Rendu hybride** : pages statiques pré-rendues au build (SSG) pour les pages publiques, rendu serveur à la demande (SSR) pour les pages dynamiques
+
+### 6.3 Résultats et impact
+
+Le travail SEO et performance permet à Vite & Gourmand de se positionner favorablement sur les recherches locales liées au traiteur événementiel à Bordeaux. Les données structurées enrichissent l'affichage Google (étoiles, horaires, localisation) et le score Core Web Vitals excellent contribue au classement dans les résultats de recherche.
 
 ---
 

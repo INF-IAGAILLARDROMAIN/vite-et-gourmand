@@ -223,4 +223,8 @@ J'ai recherche la solution sur la documentation officielle de Prisma en anglais 
 - Textes alternatifs sur les images
 - Structure semantique HTML (header, main, footer, nav, section)
 
-**Performance** : L'application utilise les optimisations natives de Next.js (code splitting automatique, optimisation d'images, polices auto-hebergees) et Framer Motion avec des animations GPU-accelerees (transform/opacity uniquement).
+**Performance et SEO** : L'application a fait l'objet d'un travail approfondi d'optimisation du referencement naturel et des performances web. Les scores Core Web Vitals mesures en production sont excellents : LCP de 1 026 ms (seuil Google : 2 500 ms), CLS de 0.00 (parfait), TTFB de 33 ms. Les optimisations incluent :
+- **SEO technique** : sitemap XML dynamique (incluant les pages menus generees depuis l'API), robots.txt, URL canonique, balises meta uniques sur chaque page, metadonnees dynamiques (`generateMetadata`) sur les fiches menus
+- **Donnees structurees JSON-LD** : schemas FoodEstablishment (avec note agrégée 4.8/5, horaires, geolocalisation Bordeaux) et WebSite pour le Knowledge Panel Google, permettant l'affichage d'etoiles et d'informations enrichies dans les resultats de recherche
+- **SEO social** : balises OpenGraph et Twitter Cards sur toutes les pages, image OG dediee 1200x630px
+- **Performance** : images servies en format WebP (reduction 30-50% du poids), cache HTTP immutable (1 an) sur images et assets statiques, polices auto-hebergees via next/font, preconnect et dns-prefetch vers l'API, code splitting automatique par route, animations GPU-accelerees (Framer Motion)
