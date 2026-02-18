@@ -6,6 +6,14 @@ import { CreateMenuDto, UpdateMenuDto, FilterMenuDto } from './dto';
 export class MenuService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async findAllThemes() {
+    return this.prisma.theme.findMany({ orderBy: { libelle: 'asc' } });
+  }
+
+  async findAllRegimes() {
+    return this.prisma.regime.findMany({ orderBy: { libelle: 'asc' } });
+  }
+
   async findAll(filters: FilterMenuDto) {
     const where: any = {};
 

@@ -25,6 +25,16 @@ export class MenuController {
     return this.menuService.findAll(filters);
   }
 
+  @Get('themes')
+  findAllThemes() {
+    return this.menuService.findAllThemes();
+  }
+
+  @Get('regimes')
+  findAllRegimes() {
+    return this.menuService.findAllRegimes();
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.menuService.findOne(id);

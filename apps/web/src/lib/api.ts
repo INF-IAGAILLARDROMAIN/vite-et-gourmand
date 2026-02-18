@@ -68,6 +68,9 @@ export const menus = {
 
   delete: (id: number) =>
     request(`/menus/${id}`, { method: 'DELETE' }),
+
+  getThemes: () => request<import('./types').Theme[]>('/menus/themes'),
+  getRegimes: () => request<import('./types').Regime[]>('/menus/regimes'),
 };
 
 // Plats
