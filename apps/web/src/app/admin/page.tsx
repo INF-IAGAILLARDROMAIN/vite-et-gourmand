@@ -60,7 +60,7 @@ export default function AdminDashboard() {
       {/* Chart: orders per menu */}
       <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
         <TrendingUp className="h-5 w-5 text-primary-500" />
-        Commandes par menu (données MongoDB)
+        Commandes par menu
       </h2>
 
       {loading ? (

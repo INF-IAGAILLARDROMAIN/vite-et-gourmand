@@ -102,24 +102,73 @@ export class AdminService {
 
   /**
    * Get order stats grouped by menu — reads from MongoDB (NoSQL).
+   * Falls back to PostgreSQL aggregation if MongoDB is unavailable.
    */
   async getOrderStats() {
-    return this.mongoService.getOrderStatsByMenu();
+    const mongoStats = await this.mongoService.getOrderStatsByMenu();
+    if (mongoStats.length > 0) return mongoStats;
+
+    // Fallback: aggregate from PostgreSQL via Prisma
+    const commandes = await this.prisma.commande.groupBy({
+      by: ['menuId'],
+      _count: { id: true },
+      _sum: { prixMenu: true, prixLivraison: true },
+    });
+
+    const menuIds = commandes.map((c) => c.menuId);
+    const menus = await this.prisma.menu.findMany({
+      where: { id: { in: menuIds } },
+      select: { id: true, titre: true },
+    });
+    const menuMap = new Map(menus.map((m) => [m.id, m.titre]));
+
+    return commandes.map((c) => ({
+      menuId: c.menuId,
+      menuTitre: menuMap.get(c.menuId) ?? `Menu #${c.menuId}`,
+      totalCommandes: c._count.id,
+      chiffreAffaires:
+        Number(c._sum.prixMenu ?? 0) + Number(c._sum.prixLivraison ?? 0),
+    }));
   }
 
   /**
    * Get revenue entries with optional filters — reads from MongoDB (NoSQL).
+   * Falls back to PostgreSQL if MongoDB is unavailable.
    */
   async getRevenueStats(filters?: {
     menuId?: number;
     dateDebut?: string;
     dateFin?: string;
   }) {
-    return this.mongoService.getRevenueStats({
+    const mongoStats = await this.mongoService.getRevenueStats({
       menuId: filters?.menuId,
       dateDebut: filters?.dateDebut ? new Date(filters.dateDebut) : undefined,
       dateFin: filters?.dateFin ? new Date(filters.dateFin) : undefined,
     });
+    if (mongoStats.length > 0) return mongoStats;
+
+    // Fallback: query from PostgreSQL via Prisma
+    const where: Record<string, unknown> = {};
+    if (filters?.menuId) where.menuId = filters.menuId;
+    if (filters?.dateDebut || filters?.dateFin) {
+      where.dateCommande = {};
+      if (filters?.dateDebut) (where.dateCommande as Record<string, unknown>).gte = new Date(filters.dateDebut);
+      if (filters?.dateFin) (where.dateCommande as Record<string, unknown>).lte = new Date(filters.dateFin);
+    }
+
+    const commandes = await this.prisma.commande.findMany({
+      where,
+      include: { menu: { select: { titre: true } } },
+      orderBy: { dateCommande: 'asc' },
+    });
+
+    return commandes.map((c) => ({
+      date: c.dateCommande,
+      menu: c.menu.titre,
+      montant: Number(c.prixMenu) + Number(c.prixLivraison),
+      nombrePersonnes: c.nombrePersonnes,
+      statut: c.statut,
+    }));
   }
 
   /**
