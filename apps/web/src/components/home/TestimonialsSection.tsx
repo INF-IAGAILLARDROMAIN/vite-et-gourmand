@@ -115,8 +115,10 @@ export default function TestimonialsSection() {
                     <Image
                       src={avatarSrc}
                       alt={fullName}
-                      width={40}
-                      height={40}
+                      width={80}
+                      height={80}
+                      quality={90}
+                      loading="eager"
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
