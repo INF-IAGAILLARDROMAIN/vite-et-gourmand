@@ -1,14 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { OrderStat, OrderStatDocument } from './schemas/order-stat.schema';
+import { OrderStat, OrderStatDocument } from './schemas/order-stat.schema.js';
 
 @Injectable()
 export class MongoService {
+  private readonly logger = new Logger(MongoService.name);
+
   constructor(
+    @Optional()
     @InjectModel(OrderStat.name)
-    private readonly orderStatModel: Model<OrderStatDocument>,
+    private readonly orderStatModel?: Model<OrderStatDocument>,
   ) {}
+
+  private get isAvailable(): boolean {
+    return !!this.orderStatModel;
+  }
 
   /**
    * Upsert an order stat document when a commande is created or updated.
@@ -26,7 +33,8 @@ export class MongoService {
     clientId: number;
     clientNom: string;
   }) {
-    await this.orderStatModel.findOneAndUpdate(
+    if (!this.isAvailable) return;
+    await this.orderStatModel!.findOneAndUpdate(
       { commandeId: data.commandeId },
       {
         ...data,
@@ -40,7 +48,8 @@ export class MongoService {
    * Get order count and revenue grouped by menu.
    */
   async getOrderStatsByMenu() {
-    return this.orderStatModel.aggregate([
+    if (!this.isAvailable) return [];
+    return this.orderStatModel!.aggregate([
       {
         $group: {
           _id: { menuId: '$menuId', menuTitre: '$menuTitre' },
@@ -84,7 +93,8 @@ export class MongoService {
       }
     }
 
-    return this.orderStatModel.aggregate([
+    if (!this.isAvailable) return [];
+    return this.orderStatModel!.aggregate([
       ...(Object.keys(match).length > 0 ? [{ $match: match }] : []),
       {
         $project: {
@@ -124,8 +134,8 @@ export class MongoService {
         upsert: true,
       },
     }));
-    if (ops.length > 0) {
-      await this.orderStatModel.bulkWrite(ops);
+    if (ops.length > 0 && this.isAvailable) {
+      await this.orderStatModel!.bulkWrite(ops);
     }
   }
 }

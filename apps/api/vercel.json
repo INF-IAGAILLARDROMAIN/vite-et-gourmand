@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "installCommand": "npm install",
+  "buildCommand": "npx prisma generate && npm run build",
+  "outputDirectory": ".",
+  "builds": [
+    {
+      "src": "dist/serverless.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "dist/serverless.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "dist/serverless.js"
+    }
+  ]
+}

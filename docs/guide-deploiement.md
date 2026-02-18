@@ -119,12 +119,12 @@ PORT=3000
 
 ### 5.3 Vérifier le déploiement
 
-Railway génère une URL publique, par exemple :
+L'API est déployée sur Vercel Serverless :
 ```
-https://vite-et-gourmand-api-production.up.railway.app
+https://vite-et-gourmand-api.vercel.app
 ```
 
-Tester : `GET https://votre-url.railway.app/api`
+Tester : `GET https://vite-et-gourmand-api.vercel.app/api`
 
 ---
 
@@ -144,14 +144,14 @@ Tester : `GET https://votre-url.railway.app/api`
 
 **Variables d'environnement :**
 ```
-NEXT_PUBLIC_API_URL=https://votre-url.railway.app/api
+NEXT_PUBLIC_API_URL=https://vite-et-gourmand-api.vercel.app/api
 ```
 
 ### 5.3 Vérifier le déploiement
 
-Vercel génère une URL publique, par exemple :
+Le frontend est accessible à :
 ```
-https://vite-et-gourmand.vercel.app
+https://vite-et-gourmand-rust.vercel.app
 ```
 
 ---

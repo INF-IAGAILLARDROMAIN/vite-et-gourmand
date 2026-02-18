@@ -17,7 +17,7 @@ import { MongoModule } from './mongo/mongo.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
-    MongoModule,
+    MongoModule.forRoot(),
     AuthModule,
     MenuModule,
     PlatModule,

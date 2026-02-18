@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AdminController } from './admin.controller';
-import { AdminService } from './admin.service';
-import { MailModule } from '../mail/mail.module';
-import { MongoModule } from '../mongo/mongo.module';
+import { AdminController } from './admin.controller.js';
+import { AdminService } from './admin.service.js';
+import { MailModule } from '../mail/mail.module.js';
 
 @Module({
-  imports: [MailModule, MongoModule],
+  imports: [MailModule],
   controllers: [AdminController],
   providers: [AdminService],
 })

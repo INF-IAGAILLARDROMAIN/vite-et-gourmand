@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { CommandeController } from './commande.controller';
-import { CommandeService } from './commande.service';
-import { MailModule } from '../mail/mail.module';
-import { MongoModule } from '../mongo/mongo.module';
+import { CommandeController } from './commande.controller.js';
+import { CommandeService } from './commande.service.js';
+import { MailModule } from '../mail/mail.module.js';
 
 @Module({
-  imports: [MailModule, MongoModule],
+  imports: [MailModule],
   controllers: [CommandeController],
   providers: [CommandeService],
 })

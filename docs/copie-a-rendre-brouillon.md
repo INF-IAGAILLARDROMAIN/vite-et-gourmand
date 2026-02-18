@@ -12,7 +12,7 @@
 
 - **Lien du Git** : https://github.com/INF-IAGAILLARDROMAIN/vite-et-gourmand
 - **Lien de l'outil de gestion de projet** : [URL TRELLO A REMPLIR]
-- **Lien du deploiement** : [URL VERCEL A REMPLIR]
+- **Lien du deploiement** : https://vite-et-gourmand-rust.vercel.app
 - **Login et mot de passe administrateur** : admin@viteetgourmand.fr / Admin@2026!
 
 ---
