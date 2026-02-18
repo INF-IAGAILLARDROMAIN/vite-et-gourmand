@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { motion, useInView } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import { avis as avisApi } from '@/lib/api';
@@ -112,13 +111,11 @@ export default function TestimonialsSection() {
                   const fullName = `${t.utilisateur.prenom} ${t.utilisateur.nom}`;
                   const avatarSrc = AVATAR_MAP[fullName];
                   return avatarSrc ? (
-                    <Image
+                    <img
                       src={avatarSrc}
                       alt={fullName}
-                      width={80}
-                      height={80}
-                      quality={90}
-                      loading="eager"
+                      width={40}
+                      height={40}
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
