@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import { avis as avisApi } from '@/lib/api';
 import type { Avis } from '@/lib/types';
@@ -28,6 +28,9 @@ const FALLBACK_TESTIMONIALS = [
 ];
 
 export default function TestimonialsSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
   const [reviews, setReviews] = useState<Array<{
     id: number;
     note: number;
@@ -73,13 +76,12 @@ export default function TestimonialsSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div ref={ref} className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {reviews.map((t, i) => (
             <motion.div
               key={t.id}
               initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.4, delay: i * 0.1 }}
               className="relative p-6 bg-warm-50 rounded-xl border border-warm-200 hover:shadow-md transition-shadow"
             >

@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { Utensils, Truck, Users, Shield, Clock, ChefHat } from 'lucide-react';
 
 const FEATURES = [
@@ -51,6 +52,9 @@ const item = {
 };
 
 export default function FeaturesSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-80px' });
+
   return (
     <section className="py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -64,10 +68,10 @@ export default function FeaturesSection() {
         </div>
 
         <motion.div
+          ref={ref}
           variants={container}
           initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: '-80px' }}
+          animate={isInView ? 'show' : 'hidden'}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           {FEATURES.map((feature) => (

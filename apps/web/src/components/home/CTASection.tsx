@@ -1,18 +1,22 @@
 'use client';
 
+import { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
 export default function CTASection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
   return (
     <section className="py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
+          ref={ref}
           initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
+          animate={isInView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.5 }}
           className="relative overflow-hidden rounded-2xl px-8 py-16 sm:px-16 text-center"
         >
