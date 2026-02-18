@@ -37,3 +37,18 @@ apps/api/prisma/*.db
 # Misc
 *.tsbuildinfo
 coverage/
+
+# Claude Code
+.claude/
+
+# Vercel
+.vercel/
+
+# Temporary build files
+docs/_tmp_html/
+
+# Exam source files (not part of the project)
+docs/Evaluation en Cours de Formation*/
+
+# Lock files
+.~lock.*
