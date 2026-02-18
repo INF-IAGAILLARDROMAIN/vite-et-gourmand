@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"><title>Documentation Technique</title><style>
+@page { size: A4; margin: 1.5cm 1.8cm; }
+body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5pt; line-height: 1.5; color: #1e293b; max-width: 800px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 20pt; color: #b45309; border-bottom: 2px solid #fbbf24; padding-bottom: 6px; margin-top: 22px; margin-bottom: 8px; page-break-after: avoid; }
+h2 { font-size: 15pt; color: #92400e; margin-top: 20px; margin-bottom: 8px; page-break-after: avoid; }
+h3 { font-size: 12pt; color: #78350f; margin-top: 14px; margin-bottom: 6px; page-break-after: avoid; }
+h4 { font-size: 10.5pt; color: #78350f; margin-top: 10px; }
+table { border-collapse: collapse; width: 100%; margin: 6px 0 10px 0; font-size: 9.5pt; page-break-inside: avoid; }
+th, td { border: 1px solid #cbd5e1; padding: 4px 8px; text-align: left; }
+th { background-color: #fef3c7; font-weight: 600; }
+tr:nth-child(even) { background-color: #fafaf9; }
+code { background-color: #f1f5f9; padding: 1px 3px; border-radius: 3px; font-size: 9pt; }
+pre { background-color: #1e293b; color: #e2e8f0; padding: 10px; border-radius: 6px; font-size: 8.5pt; overflow-x: auto; white-space: pre-wrap; page-break-inside: avoid; }
+pre code { background: none; color: inherit; }
+blockquote { border-left: 3px solid #fbbf24; padding-left: 10px; color: #475569; font-style: italic; margin: 8px 0; }
+strong { color: #0f172a; }
+hr { border: none; border-top: 1px solid #e2e8f0; margin: 14px 0; }
+ul, ol { padding-left: 18px; margin: 6px 0; }
+li { margin-bottom: 2px; }
+p { margin: 6px 0; }
+img { max-width: 100%; height: auto; margin: 6px 0; }
+.header-banner { background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 24px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
+.header-banner h1 { border: none; color: #78350f; font-size: 26pt; margin: 0; }
+.header-banner p { color: #92400e; font-size: 11pt; margin: 6px 0 0 0; }
+</style></head>
+<body>
+<div class="header-banner">
+<h1>Documentation Technique</h1>
+<p>Vite \& Gourmand — Architecture et Choix Techniques</p>
+</div>
+<h2>1. Présentation du projet</h2>
+<h3>1.1 Contexte</h3>
+<p><strong>Vite &amp; Gourmand</strong> est le projet que j'ai développé dans le cadre de mon ECF pour le titre professionnel Développeur Web et Web Mobile. Il s'agit d'une application web complète pour un traiteur événementiel basé à Bordeaux. L'idée est simple : permettre aux clients de consulter les menus, passer des commandes pour leurs événements (mariages, anniversaires, séminaires...) et suivre l'avancement de leurs prestations. Côté équipe, un back-office permet de gérer les commandes au quotidien, modérer les avis et administrer les contenus du site.</p>
+<h3>1.2 Objectifs</h3>
+<p>Les objectifs que je me suis fixés pour ce projet :
+- Proposer aux visiteurs une vitrine claire et attractive de l'offre traiteur
+- Offrir un parcours de commande simple, de la consultation du menu jusqu'à la confirmation
+- Mettre à disposition un back-office pratique pour l'équipe au quotidien
+- Assurer la sécurité des données et le respect du RGPD</p>
+<h3>1.3 Public cible</h3>
+<p>L'application s'adresse à quatre profils d'utilisateurs :
+- <strong>Visiteurs</strong> : particuliers ou professionnels qui découvrent le site et cherchent un traiteur
+- <strong>Clients inscrits</strong> : utilisateurs qui veulent passer et suivre leurs commandes
+- <strong>Employés</strong> : l'équipe opérationnelle qui gère les commandes et le contenu
+- <strong>Administrateur</strong> : le gérant, avec un accès complet à toutes les fonctionnalités</p>
+<hr />
+<h2>2. Architecture technique</h2>
+<h3>2.1 Vue d'ensemble</h3>
+<p>J'ai structuré l'application selon une architecture <strong>client-serveur</strong> classique, avec une séparation nette entre le frontend et le backend. Le frontend (Next.js) s'occupe de l'affichage et de l'expérience utilisateur, tandis que le backend (NestJS) gère la logique métier et les données via une API REST :</p>
+<pre><code>┌─────────────────────┐     HTTP/REST     ┌─────────────────────┐
+│                     │  ──────────────&gt;  │                     │
+│   Frontend          │                   │   Backend API       │
+│   Next.js 16        │  &lt;──────────────  │   NestJS 11         │
+│   Port 3001         │     JSON          │   Port 3000         │
+│                     │                   │                     │
+└─────────────────────┘                   └──────────┬──────────┘
+                                                     │
+                                          ┌──────────┴──────────┐
+                                          │                     │
+                                    Prisma ORM           Mongoose
+                                          │                     │
+                               ┌──────────▼──────┐  ┌──────────▼──────┐
+                               │  PostgreSQL     │  │  MongoDB Atlas  │
+                               │  (Neon)         │  │  (NoSQL stats)  │
+                               └─────────────────┘  └─────────────────┘
+</code></pre>
+<blockquote>
+<p><strong>Double base de données</strong> : PostgreSQL gère les données relationnelles (utilisateurs, menus, commandes) tandis que MongoDB stocke les statistiques agrégées pour le dashboard admin (commandes par menu, chiffre d'affaires).</p>
+</blockquote>
+<h3>2.2 Frontend - Next.js 16</h3>
+<p>Pour le frontend, j'ai travaillé avec l'aide de <strong>Claude Code</strong> (Anthropic), un assistant IA intégré directement dans <strong>Visual Studio Code</strong>. Cet outil m'a permis d'accélérer le développement tout en gardant la main sur les choix d'architecture et de design. J'ai fait le choix de travailler en <strong>JSX/TSX</strong> (la syntaxe de React) pour avoir un rendu plus qualitatif et un contrôle fin sur chaque composant de l'interface.</p>
+<p><strong>Choix technologiques :</strong>
+- <strong>Next.js 16 (App Router)</strong> : j'ai choisi ce framework React pour son rendu serveur natif, son routing basé sur le système de fichiers et ses optimisations SEO intégrées
+- <strong>React 19.2</strong> : la dernière version stable, avec les hooks pour une gestion propre de l'état
+- <strong>TypeScript 5</strong> : le typage statique me permet de détecter les erreurs avant l'exécution et rend le code plus fiable
+- <strong>Tailwind CSS v4</strong> : framework CSS utility-first que j'apprécie pour sa rapidité de développement, configuré via <code>@theme inline</code> (approche CSS-first)
+- <strong>Framer Motion 12</strong> : pour des animations fluides et performantes (accélérées par le GPU)
+- <strong>Lucide React</strong> : icônes SVG légères et tree-shakeable (seules celles utilisées sont incluses dans le bundle final)</p>
+<p><strong>Architecture des pages (22 routes) :</strong></p>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Page</th>
+<th>Accès</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/</code></td>
+<td>Page d'accueil</td>
+<td>Public</td>
+</tr>
+<tr>
+<td><code>/menus</code></td>
+<td>Catalogue des menus</td>
+<td>Public</td>
+</tr>
+<tr>
+<td><code>/menus/:id</code></td>
+<td>Détail d'un menu</td>
+<td>Public</td>
+</tr>
+<tr>
+<td><code>/contact</code></td>
+<td>Formulaire de contact</td>
+<td>Public</td>
+</tr>
+<tr>
+<td><code>/mentions-legales</code></td>
+<td>Mentions légales</td>
+<td>Public</td>
+</tr>
+<tr>
+<td><code>/cgv</code></td>
+<td>Conditions générales de vente</td>
+<td>Public</td>
+</tr>
+<tr>
+<td><code>/connexion</code></td>
+<td>Page de connexion</td>
+<td>Public</td>
+</tr>
+<tr>
+<td><code>/inscription</code></td>
+<td>Page d'inscription</td>
+<td>Public</td>
+</tr>
+<tr>
+<td><code>/mot-de-passe-oublie</code></td>
+<td>Mot de passe oublié</td>
+<td>Public</td>
+</tr>
+<tr>
+<td><code>/reset-password</code></td>
+<td>Réinitialisation mot de passe</td>
+<td>Public</td>
+</tr>
+<tr>
+<td><code>/mon-compte</code></td>
+<td>Tableau de bord client</td>
+<td>Authentifié</td>
+</tr>
+<tr>
+<td><code>/mon-compte/commandes</code></td>
+<td>Liste des commandes</td>
+<td>Authentifié</td>
+</tr>
+<tr>
+<td><code>/mon-compte/commandes/:id</code></td>
+<td>Détail d'une commande</td>
+<td>Authentifié</td>
+</tr>
+<tr>
+<td><code>/commander/:menuId</code></td>
+<td>Passer une commande</td>
+<td>Authentifié</td>
+</tr>
+<tr>
+<td><code>/admin</code></td>
+<td>Dashboard administrateur</td>
+<td>Employé/Admin</td>
+</tr>
+<tr>
+<td><code>/admin/commandes</code></td>
+<td>Gestion des commandes</td>
+<td>Employé/Admin</td>
+</tr>
+<tr>
+<td><code>/admin/menus</code></td>
+<td>Gestion des menus</td>
+<td>Employé/Admin</td>
+</tr>
+<tr>
+<td><code>/admin/avis</code></td>
+<td>Modération des avis</td>
+<td>Employé/Admin</td>
+</tr>
+<tr>
+<td><code>/admin/horaires</code></td>
+<td>Gestion des horaires</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td><code>/admin/employes</code></td>
+<td>Gestion des employés</td>
+<td>Admin</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Composants réutilisables :</strong>
+J'ai créé une bibliothèque de composants réutilisables pour garder une cohérence visuelle sur tout le site :
+- <code>Button</code> : bouton avec 5 variantes (primary, secondary, outline, ghost, danger) et un état loading
+- <code>Input</code> / <code>Textarea</code> : champs de formulaire avec gestion du label et des erreurs
+- <code>Card</code> : carte avec animation de survol grâce à Framer Motion
+- <code>Badge</code> : étiquette colorée pour les tags et statuts</p>
+<p><strong>Gestion de l'authentification :</strong>
+J'ai mis en place l'authentification côté client via un React Context (<code>AuthProvider</code>). Concrètement, le token JWT est stocké dans le <code>localStorage</code> du navigateur et ajouté automatiquement aux en-têtes de chaque requête API grâce au client HTTP centralisé (<code>lib/api.ts</code>). C'est simple et ça fonctionne bien pour ce type de projet.</p>
+<h3>2.3 Backend - NestJS 11</h3>
+<p>Pour le backend, j'ai opté pour NestJS qui offre une structure modulaire très claire. Chaque fonctionnalité est isolée dans son propre module, ce qui facilite la maintenance et les tests.</p>
+<p><strong>Choix technologiques :</strong>
+- <strong>NestJS 11</strong> : framework Node.js modulaire avec injection de dépendances native
+- <strong>Prisma 7</strong> : ORM type-safe qui génère automatiquement les types TypeScript depuis le schéma
+- <strong>PostgreSQL</strong> : base de données relationnelle robuste, hébergée sur Neon
+- <strong>Passport + JWT</strong> : authentification stateless par tokens, simple et efficace
+- <strong>class-validator</strong> : validation déclarative des DTOs (on décore les propriétés et NestJS valide automatiquement)
+- <strong>Nodemailer</strong> : envoi d'emails pour le contact et la réinitialisation de mot de passe</p>
+<p><strong>Modules de l'API (8 modules métier) :</strong></p>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Responsabilité</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AuthModule</code></td>
+<td>Inscription, connexion, JWT, reset password</td>
+</tr>
+<tr>
+<td><code>MenuModule</code></td>
+<td>CRUD menus, filtrage par thème/régime/prix</td>
+</tr>
+<tr>
+<td><code>PlatModule</code></td>
+<td>CRUD plats, gestion des allergènes</td>
+</tr>
+<tr>
+<td><code>CommandeModule</code></td>
+<td>Création commande, workflow statut, annulation</td>
+</tr>
+<tr>
+<td><code>AvisModule</code></td>
+<td>Création et modération des avis</td>
+</tr>
+<tr>
+<td><code>HoraireModule</code></td>
+<td>Gestion des horaires d'ouverture</td>
+</tr>
+<tr>
+<td><code>ContactModule</code></td>
+<td>Envoi d'emails via le formulaire</td>
+</tr>
+<tr>
+<td><code>AdminModule</code></td>
+<td>Statistiques, création d'employés</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Modules techniques :</strong></p>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Responsabilité</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PrismaModule</code></td>
+<td>Connexion à la base de données</td>
+</tr>
+<tr>
+<td><code>MailModule</code></td>
+<td>Service d'envoi d'emails</td>
+</tr>
+</tbody>
+</table>
+<h3>2.4 Base de données - PostgreSQL</h3>
+<p>J'ai défini tout le schéma de données dans Prisma, ce qui me permet de générer automatiquement les migrations SQL et les types TypeScript. Le schéma comporte :
+- <strong>12 modèles</strong> (tables)
+- <strong>3 enums</strong> (PlatType, CommandeStatut, AvisStatut)
+- <strong>4 tables de liaison</strong> (MenuTheme, MenuRegime, MenuPlat, PlatAllergene)</p>
+<p><strong>Diagramme des relations principales :</strong></p>
+<pre><code>Role (1) ──── (N) Utilisateur
+                     │
+                     ├── (N) Commande ──── (1) Menu
+                     │         │
+                     │         ├── (N) CommandeHistorique
+                     │         └── (0..1) Avis
+                     │
+                     └── (N) Avis
+
+Menu (N) ──── (N) Theme     (via MenuTheme)
+Menu (N) ──── (N) Regime    (via MenuRegime)
+Menu (N) ──── (N) Plat      (via MenuPlat)
+Menu (1) ──── (N) MenuImage
+
+Plat (N) ──── (N) Allergene (via PlatAllergene)
+</code></pre>
+<hr />
+<h2>3. Sécurité</h2>
+<p>La sécurité a été un point important tout au long du développement. Voici les mesures que j'ai mises en place.</p>
+<h3>3.1 Authentification</h3>
+<ul>
+<li><strong>JWT (JSON Web Token)</strong> : j'utilise des tokens signés avec un secret configurable. L'expiration est paramétrable (24h par défaut)</li>
+<li><strong>Bcrypt</strong> : les mots de passe sont hachés avec un salt de 10 rounds — même en cas de fuite de base, les mots de passe restent protégés</li>
+<li><strong>Stratégie Passport</strong> : le token est extrait automatiquement depuis l'en-tête <code>Authorization: Bearer &lt;token&gt;</code></li>
+</ul>
+<h3>3.2 Autorisation (RBAC)</h3>
+<p>J'ai mis en place trois rôles hiérarchiques pour contrôler l'accès aux différentes parties de l'application :
+1. <strong>Utilisateur</strong> : accès uniquement à son espace client personnel
+2. <strong>Employé</strong> : accès au back-office pour gérer les commandes et les avis
+3. <strong>Administrateur</strong> : accès complet, y compris la gestion des horaires, des employés et les statistiques</p>
+<p>L'implémentation repose sur un décorateur personnalisé <code>@Roles()</code> et un guard <code>RolesGuard</code> dans NestJS.</p>
+<h3>3.3 Validation des données</h3>
+<ul>
+<li>Tous les DTOs sont validés automatiquement grâce à <code>class-validator</code> (format email, longueurs, etc.)</li>
+<li>J'ai imposé une politique de mot de passe solide : minimum 10 caractères, avec au moins 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial</li>
+<li>Pour éviter l'énumération de comptes, la route <code>forgot-password</code> retourne toujours un message de succès, que l'email existe ou non</li>
+</ul>
+<h3>3.4 CORS</h3>
+<p>La configuration CORS n'autorise que l'origine du frontend (<code>http://localhost:3001</code> en développement, l'URL Vercel en production).</p>
+<h3>3.5 Conformité RGPD</h3>
+<ul>
+<li>Une page de mentions légales détaille la collecte et l'utilisation des données</li>
+<li>Les droits d'accès et de suppression des données sont mentionnés</li>
+<li>Les mots de passe sont hashés et les données personnelles stockées de manière sécurisée</li>
+</ul>
+<hr />
+<h2>4. Fonctionnalités détaillées</h2>
+<h3>4.1 Catalogue de menus</h3>
+<p>Les visiteurs peuvent consulter librement tous les menus et les filtrer par :
+- <strong>Thème</strong> : Noël, Pâques, Classique, Événement
+- <strong>Régime alimentaire</strong> : Classique, Végétarien, Végan, Sans gluten
+- <strong>Budget maximum</strong> : par prix/personne
+- <strong>Recherche</strong> : par mot-clé dans le titre</p>
+<p>Chaque menu affiche sa composition complète (entrées, plats, desserts) avec les allergènes de chaque plat.</p>
+<h3>4.2 Processus de commande</h3>
+<p>Le parcours de commande se déroule en quelques étapes :
+1. Le client choisit un menu dans le catalogue
+2. Il remplit le formulaire avec la date, l'heure, l'adresse de livraison et le nombre de personnes
+3. Le prix est calculé en temps réel à l'écran :
+   - Prix du menu = prix/personne x nombre de personnes
+   - Livraison = gratuit à Bordeaux, sinon 5€ + 0,59€/km
+   - Une réduction de 10% s'applique automatiquement si le nombre de personnes dépasse le minimum du menu de 5 ou plus
+4. À la validation, une confirmation est envoyée par email</p>
+<h3>4.3 Workflow des commandes</h3>
+<p>Chaque commande passe par un cycle de vie bien défini :</p>
+<pre><code>RECUE ─&gt; ACCEPTEE ─&gt; EN_PREPARATION ─&gt; EN_LIVRAISON ─&gt; LIVREE ─&gt; ATTENTE_RETOUR_MATERIEL ─&gt; TERMINEE
+</code></pre>
+<ul>
+<li>Le client peut <strong>annuler</strong> sa commande tant qu'elle n'a pas encore été acceptée par l'équipe (statut RECUE)</li>
+<li>L'employé fait avancer le statut étape par étape depuis le back-office</li>
+<li>Chaque changement de statut est horodaté et enregistré dans un historique (<code>CommandeHistorique</code>), ce qui permet au client de suivre l'avancement</li>
+</ul>
+<h3>4.4 Système d'avis</h3>
+<ul>
+<li>Après une commande terminée, le client peut laisser un avis avec une note de 1 à 5 et un commentaire</li>
+<li>Tous les avis passent par une modération : l'équipe peut les valider ou les refuser</li>
+<li>Seuls les avis validés apparaissent sur le site public, ce qui garantit la qualité du contenu</li>
+</ul>
+<h3>4.5 Back-office</h3>
+<p>J'ai développé un back-office complet accessible via <code>/admin</code>. Il permet à l'équipe de :
+- Visualiser un <strong>dashboard</strong> avec les statistiques par menu (nombre de commandes, chiffre d'affaires)
+- Gérer les <strong>commandes</strong> et faire avancer leur statut dans le workflow
+- <strong>Modérer les avis</strong> en un clic (valider ou refuser)
+- Mettre à jour les <strong>horaires</strong> d'ouverture
+- <strong>Créer des comptes employés</strong> (réservé à l'administrateur)</p>
+<hr />
+<h2>5. Choix techniques justifiés</h2>
+<p>Voici les principaux choix techniques que j'ai faits et pourquoi.</p>
+<h3>5.1 Next.js 16 vs autres frameworks</h3>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>Next.js</th>
+<th>Create React App</th>
+<th>Vue.js</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SEO natif</td>
+<td>Oui (SSR/SSG)</td>
+<td>Non</td>
+<td>Nuxt requis</td>
+</tr>
+<tr>
+<td>Performance</td>
+<td>Optimale (code splitting auto)</td>
+<td>Manuelle</td>
+<td>Bonne</td>
+</tr>
+<tr>
+<td>Routing</td>
+<td>File-system</td>
+<td>React Router</td>
+<td>Vue Router</td>
+</tr>
+<tr>
+<td>Écosystème</td>
+<td>Très riche</td>
+<td>Riche</td>
+<td>Bon</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Mon choix : Next.js</strong> — le SEO natif était un vrai plus pour un site vitrine de traiteur, et le routing file-system simplifie beaucoup l'organisation du code.</p>
+<h3>5.2 NestJS vs Express</h3>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>NestJS</th>
+<th>Express</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Structure</td>
+<td>Modulaire (modules, services, controllers)</td>
+<td>Libre</td>
+</tr>
+<tr>
+<td>TypeScript</td>
+<td>Natif</td>
+<td>Ajout manuel</td>
+</tr>
+<tr>
+<td>Injection de dépendances</td>
+<td>Oui</td>
+<td>Non</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Intégrée (pipes)</td>
+<td>Middleware</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Mon choix : NestJS</strong> — sa structure modulaire me permet de garder un code propre et organisé, et le TypeScript natif évite les erreurs classiques.</p>
+<h3>5.3 Prisma vs TypeORM</h3>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>Prisma</th>
+<th>TypeORM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type safety</td>
+<td>Génération automatique</td>
+<td>Partiel</td>
+</tr>
+<tr>
+<td>Migrations</td>
+<td>Automatiques</td>
+<td>Semi-automatiques</td>
+</tr>
+<tr>
+<td>Syntaxe</td>
+<td>Déclarative (schéma)</td>
+<td>Decorators</td>
+</tr>
+<tr>
+<td>Performance</td>
+<td>Très bonne</td>
+<td>Bonne</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Mon choix : Prisma</strong> — le fait de définir le schéma dans un seul fichier et d'obtenir automatiquement les types TypeScript et les migrations est un gain de temps énorme.</p>
+<h3>5.4 Tailwind CSS v4 vs CSS classique / SCSS</h3>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>Tailwind CSS</th>
+<th>CSS/SCSS</th>
+<th>Styled Components</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Productivité</td>
+<td>Très haute</td>
+<td>Moyenne</td>
+<td>Haute</td>
+</tr>
+<tr>
+<td>Bundle size</td>
+<td>Minimal (purge)</td>
+<td>Variable</td>
+<td>Runtime overhead</td>
+</tr>
+<tr>
+<td>Responsive</td>
+<td>Utilitaires natifs</td>
+<td>Media queries</td>
+<td>Media queries</td>
+</tr>
+<tr>
+<td>Maintenance</td>
+<td>Excellente</td>
+<td>Difficile à scale</td>
+<td>Bonne</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Mon choix : Tailwind CSS v4</strong> — j'apprécie pouvoir styliser directement dans le JSX sans jongler entre fichiers CSS. Le bundle final est minimal grâce au purge automatique.</p>
+<hr />
+<h2>6. SEO et performance</h2>
+<p>J'ai porté une attention particulière au référencement et aux performances, car un site de traiteur doit être bien positionné sur Google et charger rapidement.</p>
+<h3>6.1 Optimisations SEO</h3>
+<ul>
+<li><strong>Métadonnées</strong> : title templates, descriptions OpenGraph sur toutes les pages</li>
+<li><strong>Données structurées</strong> : schéma JSON-LD <code>Restaurant</code> sur la page d'accueil</li>
+<li><strong>Sitemap XML</strong> : généré dynamiquement (<code>/sitemap.xml</code>)</li>
+<li><strong>Robots.txt</strong> : pages admin et compte exclues de l'indexation</li>
+<li><strong>URLs propres</strong> : routes françaises lisibles (<code>/menus</code>, <code>/contact</code>, <code>/mentions-legales</code>)</li>
+</ul>
+<h3>6.2 Optimisations de performance</h3>
+<ul>
+<li><strong>Polices</strong> : chargement optimisé via <code>next/font/google</code> (auto-hébergées, pas de requête externe)</li>
+<li><strong>Images</strong> : composant <code>next/image</code> avec lazy loading et optimisation automatique</li>
+<li><strong>Animations</strong> : Framer Motion utilise les propriétés CSS <code>transform</code> et <code>opacity</code> (GPU-accelerated)</li>
+<li><strong>Code splitting</strong> : automatique par route avec Next.js App Router</li>
+<li><strong>Tree shaking</strong> : Lucide React n'inclut que les icônes importées</li>
+</ul>
+<hr />
+<h2>7. Déploiement</h2>
+<h3>7.1 Environnements</h3>
+<table>
+<thead>
+<tr>
+<th>Environnement</th>
+<th>Frontend</th>
+<th>Backend</th>
+<th>BDD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Développement</td>
+<td>localhost:3001</td>
+<td>localhost:3000</td>
+<td>PostgreSQL local ou Neon</td>
+</tr>
+<tr>
+<td>Production</td>
+<td>Vercel</td>
+<td>Vercel (serverless)</td>
+<td>Neon</td>
+</tr>
+</tbody>
+</table>
+<h3>7.2 Variables d'environnement</h3>
+<p><strong>Backend (<code>apps/api/.env</code>) :</strong></p>
+<pre><code>DATABASE_URL=            # URL de connexion PostgreSQL (Neon)
+MONGODB_URI=             # URL de connexion MongoDB Atlas (pour stats NoSQL)
+JWT_SECRET=              # Secret de signature JWT (min. 32 caractères)
+JWT_EXPIRES_IN=          # Durée de validité du token (ex: 7d)
+FRONTEND_URL=            # URL du frontend (pour CORS et liens email)
+SMTP_HOST=               # Serveur SMTP
+SMTP_PORT=               # Port SMTP
+SMTP_USER=               # Email expéditeur
+SMTP_PASS=               # Mot de passe email
+MAIL_FROM=               # Adresse expéditeur (ex: noreply@viteetgourmand.fr)
+</code></pre>
+<p><strong>Frontend (<code>apps/web/.env.local</code>) :</strong></p>
+<pre><code>NEXT_PUBLIC_API_URL=     # URL de l'API backend
+</code></pre>
+<hr />
+<h2>8. Données de démonstration</h2>
+<p>Pour tester et présenter l'application, j'ai créé un fichier <code>seed.ts</code> qui remplit la base avec des données réalistes :</p>
+<ul>
+<li><strong>3 rôles</strong> : administrateur, employé, utilisateur</li>
+<li><strong>3 utilisateurs</strong> : un admin, un employé, un client</li>
+<li><strong>4 thèmes</strong> : Noël, Pâques, Classique, Événement</li>
+<li><strong>4 régimes</strong> : Classique, Végétarien, Végan, Sans gluten</li>
+<li><strong>14 allergènes</strong> : liste réglementaire européenne complète</li>
+<li><strong>18 plats</strong> : 6 entrées, 6 plats, 6 desserts avec allergènes associés</li>
+<li><strong>5 menus</strong> : compositions variées avec thèmes et régimes</li>
+<li><strong>7 horaires</strong> : lundi à dimanche</li>
+<li><strong>2 commandes</strong> : une terminée, une en cours</li>
+<li><strong>1 avis</strong> : validé avec note 5/5</li>
+</ul>
+<hr />
+<h2>9. Modèle Conceptuel de Données (MCD)</h2>
+<p>Le MCD ci-dessous représente l'ensemble des entités de l'application et leurs associations. Je me suis basé sur l'Annexe 1 du cahier des charges (MCD fourni) et je l'ai étendu pour couvrir tous les besoins fonctionnels identifiés (images de menus, historique de commandes, etc.).</p>
+<pre><code class="language-mermaid">erDiagram
+    ROLE ||--o{ UTILISATEUR : &quot;possède&quot;
+    UTILISATEUR ||--o{ COMMANDE : &quot;passe&quot;
+    UTILISATEUR ||--o{ AVIS : &quot;rédige&quot;
+
+    MENU ||--o{ COMMANDE : &quot;concerne&quot;
+    MENU ||--o{ MENU_IMAGE : &quot;illustré par&quot;
+    MENU }o--o{ THEME : &quot;associé à&quot;
+    MENU }o--o{ REGIME : &quot;compatible avec&quot;
+    MENU }o--o{ PLAT : &quot;composé de&quot;
+
+    PLAT }o--o{ ALLERGENE : &quot;contient&quot;
+
+    COMMANDE ||--o{ COMMANDE_HISTORIQUE : &quot;historise&quot;
+    COMMANDE ||--o| AVIS : &quot;évalué par&quot;
+
+    ROLE {
+        int role_id PK
+        varchar libelle UK
+    }
+
+    UTILISATEUR {
+        int utilisateur_id PK
+        varchar email UK
+        varchar password
+        varchar nom
+        varchar prenom
+        varchar telephone
+        varchar adresse_postale
+        boolean is_active
+        timestamp created_at
+        int role_id FK
+    }
+
+    MENU {
+        int menu_id PK
+        varchar titre
+        int nombre_personne_minimale
+        float prix_par_personne
+        text description
+        int quantite_restante
+        text conditions
+    }
+
+    MENU_IMAGE {
+        int id PK
+        varchar url
+        varchar alt
+        int menu_id FK
+    }
+
+    THEME {
+        int theme_id PK
+        varchar libelle UK
+    }
+
+    REGIME {
+        int regime_id PK
+        varchar libelle UK
+    }
+
+    PLAT {
+        int plat_id PK
+        varchar titre_plat
+        varchar photo
+        enum type
+    }
+
+    ALLERGENE {
+        int allergene_id PK
+        varchar libelle UK
+    }
+
+    COMMANDE {
+        int id PK
+        varchar numero_commande UK
+        timestamp date_commande
+        timestamp date_prestation
+        varchar heure_prestation
+        varchar adresse
+        float prix_menu
+        int nombre_personnes
+        float prix_livraison
+        enum statut
+        boolean validation_materiel
+        text motif_annulation
+        varchar mode_contact
+        int utilisateur_id FK
+        int menu_id FK
+    }
+
+    COMMANDE_HISTORIQUE {
+        int id PK
+        enum statut
+        timestamp date
+        int commande_id FK
+    }
+
+    AVIS {
+        int avis_id PK
+        int note
+        text description
+        enum statut
+        timestamp created_at
+        int utilisateur_id FK
+        int commande_id FK
+    }
+
+    HORAIRE {
+        int horaire_id PK
+        varchar jour UK
+        varchar heure_ouverture
+        varchar heure_fermeture
+    }
+</code></pre>
+<h3>Tables de liaison (Many-to-Many)</h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Clés composites</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>menu_theme</code></td>
+<td>(menu_id, theme_id)</td>
+<td>Association menu ↔ thème</td>
+</tr>
+<tr>
+<td><code>menu_regime</code></td>
+<td>(menu_id, regime_id)</td>
+<td>Association menu ↔ régime alimentaire</td>
+</tr>
+<tr>
+<td><code>menu_plat</code></td>
+<td>(menu_id, plat_id)</td>
+<td>Composition d'un menu en plats</td>
+</tr>
+<tr>
+<td><code>plat_allergene</code></td>
+<td>(plat_id, allergene_id)</td>
+<td>Allergènes présents dans un plat</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>10. Diagramme de cas d'utilisation</h2>
+<p>Le diagramme ci-dessous montre les interactions des différents acteurs avec le système.</p>
+<pre><code class="language-mermaid">graph TB
+    subgraph Acteurs
+        V((Visiteur))
+        C((Client))
+        E((Employé))
+        A((Administrateur))
+    end
+
+    subgraph &quot;Espace Public&quot;
+        UC1[Consulter les menus]
+        UC2[Filtrer les menus par thème/régime/prix]
+        UC3[Voir le détail d'un menu]
+        UC4[Envoyer un message via le formulaire contact]
+        UC5[Consulter les mentions légales / CGV]
+        UC6[Voir les avis clients validés]
+    end
+
+    subgraph &quot;Authentification&quot;
+        UC7[S'inscrire]
+        UC8[Se connecter]
+        UC9[Réinitialiser son mot de passe]
+    end
+
+    subgraph &quot;Espace Client&quot;
+        UC10[Passer une commande]
+        UC11[Suivre ses commandes]
+        UC12[Modifier/Annuler une commande]
+        UC13[Laisser un avis sur une commande terminée]
+        UC14[Consulter son profil]
+    end
+
+    subgraph &quot;Espace Employé&quot;
+        UC15[Gérer les commandes - avancer le statut]
+        UC16[Annuler une commande avec motif]
+        UC17[Modérer les avis]
+        UC18[Gérer les menus et plats CRUD]
+        UC19[Gérer les horaires]
+    end
+
+    subgraph &quot;Espace Administrateur&quot;
+        UC20[Créer un compte employé]
+        UC21[Désactiver un compte employé]
+        UC22[Consulter les statistiques - graphiques]
+        UC23[Consulter le CA par menu]
+    end
+
+    V --&gt; UC1
+    V --&gt; UC2
+    V --&gt; UC3
+    V --&gt; UC4
+    V --&gt; UC5
+    V --&gt; UC6
+    V --&gt; UC7
+    V --&gt; UC8
+    V --&gt; UC9
+
+    C --&gt; UC1
+    C --&gt; UC2
+    C --&gt; UC3
+    C --&gt; UC10
+    C --&gt; UC11
+    C --&gt; UC12
+    C --&gt; UC13
+    C --&gt; UC14
+
+    E --&gt; UC15
+    E --&gt; UC16
+    E --&gt; UC17
+    E --&gt; UC18
+    E --&gt; UC19
+
+    A --&gt; UC15
+    A --&gt; UC16
+    A --&gt; UC17
+    A --&gt; UC18
+    A --&gt; UC19
+    A --&gt; UC20
+    A --&gt; UC21
+    A --&gt; UC22
+    A --&gt; UC23
+</code></pre>
+<blockquote>
+<p><strong>Note</strong> : L'administrateur hérite de tous les droits de l'employé. Le client hérite des droits du visiteur.</p>
+</blockquote>
+<hr />
+<h2>11. Diagramme de séquence - Parcours commande</h2>
+<p>Ce diagramme illustre le flux complet d'une commande, de la création à la terminaison.</p>
+<pre><code class="language-mermaid">sequenceDiagram
+    actor Client
+    participant Frontend as Frontend (Next.js)
+    participant API as Backend (NestJS)
+    participant PG as PostgreSQL
+    participant Mongo as MongoDB Atlas
+    participant Mail as Service Mail
+
+    Note over Client, Mail: Phase 1 - Création de la commande
+
+    Client-&gt;&gt;Frontend: Remplit le formulaire de commande
+    Frontend-&gt;&gt;Frontend: Calcul dynamique du prix (menu + livraison + réduction)
+    Client-&gt;&gt;Frontend: Valide la commande
+    Frontend-&gt;&gt;API: POST /api/commandes (JWT + données)
+
+    API-&gt;&gt;PG: Vérifie l'utilisateur
+    API-&gt;&gt;PG: Vérifie le menu et le stock
+    alt Stock disponible
+        API-&gt;&gt;PG: Transaction : décrémenter stock + créer commande
+        PG--&gt;&gt;API: Commande créée (statut RECUE)
+        API-&gt;&gt;Mongo: Sync stats commande (async)
+        API-&gt;&gt;Mail: Email confirmation (async)
+        Mail--&gt;&gt;Client: Email &quot;Commande confirmée&quot;
+        API--&gt;&gt;Frontend: 201 Created + détails commande
+        Frontend--&gt;&gt;Client: Affiche confirmation
+    else Stock épuisé
+        API--&gt;&gt;Frontend: 400 Bad Request
+        Frontend--&gt;&gt;Client: Affiche erreur &quot;Menu indisponible&quot;
+    end
+
+    Note over Client, Mail: Phase 2 - Suivi de la commande
+
+    Client-&gt;&gt;Frontend: Consulte ses commandes
+    Frontend-&gt;&gt;API: GET /api/commandes (JWT)
+    API-&gt;&gt;PG: Récupère les commandes du client
+    API--&gt;&gt;Frontend: Liste des commandes avec historique
+    Frontend--&gt;&gt;Client: Affiche timeline des statuts
+
+    Note over Client, Mail: Phase 3 - Workflow employé
+
+    actor Employe as Employé
+    Employe-&gt;&gt;Frontend: Change le statut de la commande
+    Frontend-&gt;&gt;API: PUT /api/commandes/:id/status (JWT + nouveau statut)
+    API-&gt;&gt;PG: Vérifie la transition de statut valide
+    API-&gt;&gt;PG: Met à jour statut + historique
+    API-&gt;&gt;Mongo: Sync nouveau statut (async)
+
+    alt Statut = ATTENTE_RETOUR_MATERIEL
+        API-&gt;&gt;Mail: Email &quot;Retour matériel sous 10 jours&quot;
+        Mail--&gt;&gt;Client: Email relance matériel
+    end
+
+    alt Statut = TERMINEE
+        API-&gt;&gt;Mail: Email &quot;Commande terminée - donnez votre avis&quot;
+        Mail--&gt;&gt;Client: Email invitation avis
+    end
+
+    API--&gt;&gt;Frontend: Commande mise à jour
+    Frontend--&gt;&gt;Employe: Affiche nouveau statut
+</code></pre>
+<hr />
+<h2>12. Diagramme de classe (Backend NestJS)</h2>
+<p>Ce diagramme montre l'architecture des modules, services et contrôleurs du backend.</p>
+<pre><code class="language-mermaid">classDiagram
+    class AppModule {
+        +imports: Module[]
+    }
+
+    class AuthModule {
+        +controllers: AuthController
+        +providers: AuthService, JwtStrategy
+    }
+
+    class AuthController {
+        +register(dto: RegisterDto)
+        +login(dto: LoginDto)
+        +forgotPassword(dto: ForgotPasswordDto)
+        +resetPassword(dto: ResetPasswordDto)
+        +getProfile(user: CurrentUser)
+    }
+
+    class AuthService {
+        -prisma: PrismaService
+        -jwtService: JwtService
+        -mailService: MailService
+        +register(dto: RegisterDto)
+        +login(dto: LoginDto)
+        +forgotPassword(email: string)
+        +resetPassword(token: string, password: string)
+    }
+
+    class MenuModule {
+        +controllers: MenuController
+        +providers: MenuService
+    }
+
+    class MenuService {
+        -prisma: PrismaService
+        +findAll(filters: MenuFilterDto)
+        +findOne(id: number)
+        +create(dto: CreateMenuDto)
+        +update(id: number, dto: UpdateMenuDto)
+        +remove(id: number)
+    }
+
+    class CommandeModule {
+        +controllers: CommandeController
+        +providers: CommandeService
+    }
+
+    class CommandeService {
+        -prisma: PrismaService
+        -mailService: MailService
+        -mongoService: MongoService
+        +create(dto: CreateCommandeDto, userId: number)
+        +findAll(userId: number, role: string)
+        +findOne(id: number, userId: number, role: string)
+        +update(id: number, dto: UpdateCommandeDto, userId: number)
+        +cancel(id: number, userId: number)
+        +updateStatut(id: number, dto: UpdateStatutDto)
+    }
+
+    class AdminModule {
+        +controllers: AdminController
+        +providers: AdminService
+    }
+
+    class AdminService {
+        -prisma: PrismaService
+        -mailService: MailService
+        -mongoService: MongoService
+        +getOrderStats()
+        +getRevenueStats(filters)
+        +createEmployee(dto: CreateEmployeeDto)
+        +disableEmployee(id: number)
+        +syncOrderStats()
+    }
+
+    class MongoModule {
+        +providers: MongoService
+        +exports: MongoService
+    }
+
+    class MongoService {
+        -orderStatModel: Model~OrderStat~
+        +upsertOrderStat(data)
+        +getOrderStatsByMenu()
+        +getRevenueStats(filters)
+        +bulkUpsert(data[])
+    }
+
+    class PrismaModule {
+        +providers: PrismaService
+        +exports: PrismaService
+    }
+
+    class PrismaService {
+        +onModuleInit()
+        +onModuleDestroy()
+    }
+
+    class MailModule {
+        +providers: MailService
+        +exports: MailService
+    }
+
+    class MailService {
+        -transporter: Transporter
+        +sendWelcomeEmail(to, name)
+        +sendResetPasswordEmail(to, name, link)
+        +sendOrderConfirmationEmail(to, name, orderNum, total)
+        +sendMaterielReturnEmail(to, name, orderNum)
+        +sendOrderCompletedEmail(to, name, orderNum)
+        +sendEmployeeCreatedEmail(to, name, email)
+        +sendContactEmail(title, description, email)
+    }
+
+    class JwtAuthGuard {
+        +canActivate(context)
+    }
+
+    class RolesGuard {
+        +canActivate(context)
+    }
+
+    AppModule --&gt; AuthModule
+    AppModule --&gt; MenuModule
+    AppModule --&gt; CommandeModule
+    AppModule --&gt; AdminModule
+    AppModule --&gt; MongoModule
+    AppModule --&gt; PrismaModule
+    AppModule --&gt; MailModule
+
+    AuthModule --&gt; PrismaModule
+    AuthModule --&gt; MailModule
+    MenuModule --&gt; PrismaModule
+    CommandeModule --&gt; PrismaModule
+    CommandeModule --&gt; MailModule
+    CommandeModule --&gt; MongoModule
+    AdminModule --&gt; PrismaModule
+    AdminModule --&gt; MailModule
+    AdminModule --&gt; MongoModule
+
+    AuthModule ..&gt; JwtAuthGuard
+    AuthModule ..&gt; RolesGuard
+</code></pre>
+<hr />
+<h2>13. Base de données NoSQL - MongoDB Atlas</h2>
+<h3>13.1 Justification</h3>
+<p>L'ECF demande d'utiliser une base de données NoSQL en complément du SQL. J'ai choisi MongoDB Atlas pour stocker les <strong>statistiques agrégées</strong> du dashboard admin, car c'est un cas d'usage où le NoSQL a un vrai avantage par rapport au SQL :</p>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>PostgreSQL (SQL)</th>
+<th>MongoDB (NoSQL)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Usage</td>
+<td>Données relationnelles (CRUD)</td>
+<td>Statistiques agrégées</td>
+</tr>
+<tr>
+<td>Requêtes</td>
+<td>JOIN complexes</td>
+<td>Pipeline d'agrégation</td>
+</tr>
+<tr>
+<td>Flexibilité</td>
+<td>Schéma strict</td>
+<td>Schéma flexible</td>
+</tr>
+<tr>
+<td>Performance</td>
+<td>Excellente pour CRUD</td>
+<td>Excellente pour agrégations</td>
+</tr>
+</tbody>
+</table>
+<h3>13.2 Collection <code>order_stats</code></h3>
+<pre><code class="language-javascript">{
+  commandeId: 1,              // Référence PostgreSQL
+  menuId: 1,
+  menuTitre: &quot;Menu Festif de Noël&quot;,
+  dateCommande: ISODate(&quot;2026-02-15T10:00:00Z&quot;),
+  datePrestation: ISODate(&quot;2026-03-15T00:00:00Z&quot;),
+  nombrePersonnes: 8,
+  prixMenu: 520.00,
+  prixLivraison: 0.00,
+  montantTotal: 520.00,
+  statut: &quot;TERMINEE&quot;,
+  clientId: 3,
+  clientNom: &quot;Marie Dupont&quot;
+}
+</code></pre>
+<h3>13.3 Pipelines d'agrégation</h3>
+<p><strong>Statistiques par menu :</strong></p>
+<pre><code class="language-javascript">db.order_stats.aggregate([
+  { $group: {
+      _id: { menuId: &quot;$menuId&quot;, menuTitre: &quot;$menuTitre&quot; },
+      totalCommandes: { $sum: 1 },
+      chiffreAffaires: { $sum: &quot;$montantTotal&quot; }
+  }},
+  { $sort: { chiffreAffaires: -1 } }
+])
+</code></pre>
+<h3>13.4 Synchronisation</h3>
+<p>J'ai mis en place une synchronisation <strong>non-bloquante</strong> entre PostgreSQL et MongoDB. L'idée est que si MongoDB est momentanément indisponible, ça ne bloque pas le fonctionnement normal de l'application :
+- À la création d'une commande → <code>upsertOrderStat()</code> est appelé en asynchrone (avec .catch silencieux)
+- À chaque changement de statut → même mécanisme
+- En cas de besoin, une synchronisation complète est disponible via <code>POST /api/admin/stats/sync</code></p>
+</body></html>

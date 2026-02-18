@@ -145,4 +145,4 @@ Les messages de commit suivent un format sémantique :
 | **Postman** | Tests manuels des endpoints API |
 | **Chrome DevTools** | Debug frontend et réseau |
 | **Vercel** | Hébergement frontend |
-| **Railway** | Hébergement backend |
+| **Vercel (serverless)** | Hébergement backend API |

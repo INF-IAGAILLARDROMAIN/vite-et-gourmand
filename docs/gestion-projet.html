@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"><title>Gestion de Projet</title><style>
+@page { size: A4; margin: 2cm; }
+body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; line-height: 1.6; color: #1e293b; max-width: 800px; margin: 0 auto; padding: 20px; }
+h1 { font-size: 22pt; color: #b45309; border-bottom: 2px solid #fbbf24; padding-bottom: 8px; margin-top: 30px; page-break-after: avoid; }
+h2 { font-size: 16pt; color: #92400e; margin-top: 25px; page-break-after: avoid; }
+h3 { font-size: 13pt; color: #78350f; margin-top: 18px; page-break-after: avoid; }
+h4 { font-size: 11pt; color: #78350f; margin-top: 12px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10pt; page-break-inside: avoid; }
+th, td { border: 1px solid #cbd5e1; padding: 6px 10px; text-align: left; }
+th { background-color: #fef3c7; font-weight: 600; }
+tr:nth-child(even) { background-color: #fafaf9; }
+code { background-color: #f1f5f9; padding: 1px 4px; border-radius: 3px; font-size: 9.5pt; }
+pre { background-color: #1e293b; color: #e2e8f0; padding: 12px; border-radius: 6px; font-size: 9pt; overflow-x: auto; white-space: pre-wrap; page-break-inside: avoid; }
+pre code { background: none; color: inherit; }
+blockquote { border-left: 3px solid #fbbf24; padding-left: 12px; color: #475569; font-style: italic; margin: 12px 0; }
+strong { color: #0f172a; }
+hr { border: none; border-top: 1px solid #e2e8f0; margin: 20px 0; }
+ul, ol { padding-left: 20px; }
+li { margin-bottom: 3px; }
+img { max-width: 100%; height: auto; margin: 10px 0; }
+.header-banner { background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 30px; border-radius: 12px; margin-bottom: 30px; text-align: center; }
+.header-banner h1 { border: none; color: #78350f; font-size: 28pt; margin: 0; }
+.header-banner p { color: #92400e; font-size: 12pt; margin: 8px 0 0 0; }
+</style></head>
+<body>
+<div class="header-banner">
+<h1>Gestion de Projet</h1>
+<p>Vite \& Gourmand — Méthodologie et Organisation</p>
+</div>
+<h2 id="1-methodologie">1. Méthodologie</h2>
+<h3 id="11-approche-agile-kanban">1.1 Approche Agile / Kanban</h3>
+<p>Le projet a été mené selon une méthodologie <strong>Agile simplifiée</strong> avec un board <strong>Kanban</strong>. Ce choix est justifié par :</p>
+<ul>
+<li><strong>Flexibilité</strong> : les tâches sont repriorisées au fil de l'avancement</li>
+<li><strong>Visibilité</strong> : le board offre une vue claire de l'état du projet à tout moment</li>
+<li><strong>Simplicité</strong> : pas de sprints figés, le flux continu est adapté à un projet solo</li>
+<li><strong>Efficacité</strong> : permet de se concentrer sur les tâches les plus importantes en premier</li>
+</ul>
+<h3 id="12-colonnes-du-board-kanban">1.2 Colonnes du board Kanban</h3>
+<table>
+<thead>
+<tr>
+<th>Colonne</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Backlog</strong></td>
+<td>Toutes les tâches identifiées mais pas encore démarrées</td>
+</tr>
+<tr>
+<td><strong>A faire</strong></td>
+<td>Tâches priorisées pour le sprint en cours</td>
+</tr>
+<tr>
+<td><strong>En cours</strong></td>
+<td>Tâche(s) en cours de réalisation</td>
+</tr>
+<tr>
+<td><strong>En test</strong></td>
+<td>Tâche terminée, en cours de vérification</td>
+</tr>
+<tr>
+<td><strong>Terminé</strong></td>
+<td>Tâche validée et intégrée</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13-outil-utilise">1.3 Outil utilisé</h3>
+<p><strong>Trello</strong> (accessible publiquement) — choisi pour :</p>
+<ul>
+<li>Gratuité et simplicité d'utilisation</li>
+<li>Partage public du board (lien dans la copie à rendre)</li>
+<li>Labels colorés pour catégoriser les tâches</li>
+</ul>
+<hr />
+<h2 id="2-decoupage-en-phases">2. Découpage en phases</h2>
+<p>Le projet a été découpé en <strong>10 phases</strong> correspondant aux grands blocs fonctionnels :</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Intitulé</th>
+<th>Durée estimée</th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Setup projet (repo, branches, Kanban)</td>
+<td>1h</td>
+<td>Terminé</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Design &amp; Charte graphique</td>
+<td>3h</td>
+<td>Terminé</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Base de données SQL (Prisma schema, migrations, seed)</td>
+<td>3h</td>
+<td>Terminé</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Base de données NoSQL (MongoDB Atlas, agrégations)</td>
+<td>1h</td>
+<td>Terminé</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Backend API NestJS (8 modules métier)</td>
+<td>15h</td>
+<td>Terminé</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Frontend Next.js (22 pages, composants, auth)</td>
+<td>20h</td>
+<td>Terminé</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Emails (7 templates Nodemailer)</td>
+<td>2h</td>
+<td>Terminé</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Déploiement (Vercel, Railway, Neon, Atlas)</td>
+<td>3h</td>
+<td>Terminé</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Documentation &amp; Livrables</td>
+<td>7h</td>
+<td>Terminé</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Copie à rendre</td>
+<td>3h</td>
+<td>Terminé</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Durée totale estimée : ~58h</strong> (sur 70h allouées)</p>
+<hr />
+<h2 id="3-user-stories">3. User stories</h2>
+<h3 id="31-visiteur-public">3.1 Visiteur / Public</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>En tant que...</th>
+<th>Je veux...</th>
+<th>Afin de...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US-01</td>
+<td>Visiteur</td>
+<td>Consulter la liste des menus</td>
+<td>Découvrir l'offre traiteur</td>
+</tr>
+<tr>
+<td>US-02</td>
+<td>Visiteur</td>
+<td>Filtrer les menus par thème, régime et prix</td>
+<td>Trouver un menu adapté à mon événement</td>
+</tr>
+<tr>
+<td>US-03</td>
+<td>Visiteur</td>
+<td>Voir le détail d'un menu avec plats et allergènes</td>
+<td>Vérifier la composition avant de commander</td>
+</tr>
+<tr>
+<td>US-04</td>
+<td>Visiteur</td>
+<td>Envoyer un message via le formulaire de contact</td>
+<td>Poser une question à l'entreprise</td>
+</tr>
+<tr>
+<td>US-05</td>
+<td>Visiteur</td>
+<td>Consulter les avis clients validés</td>
+<td>Me rassurer sur la qualité du service</td>
+</tr>
+<tr>
+<td>US-06</td>
+<td>Visiteur</td>
+<td>M'inscrire avec un formulaire sécurisé</td>
+<td>Créer mon compte client</td>
+</tr>
+<tr>
+<td>US-07</td>
+<td>Visiteur</td>
+<td>Me connecter avec email et mot de passe</td>
+<td>Accéder à mon espace client</td>
+</tr>
+<tr>
+<td>US-08</td>
+<td>Visiteur</td>
+<td>Réinitialiser mon mot de passe par email</td>
+<td>Récupérer l'accès à mon compte</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-client-authentifie">3.2 Client authentifié</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>En tant que...</th>
+<th>Je veux...</th>
+<th>Afin de...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US-10</td>
+<td>Client</td>
+<td>Passer une commande pour un menu</td>
+<td>Organiser mon événement</td>
+</tr>
+<tr>
+<td>US-11</td>
+<td>Client</td>
+<td>Voir le prix calculé dynamiquement</td>
+<td>Connaître le coût total avant validation</td>
+</tr>
+<tr>
+<td>US-12</td>
+<td>Client</td>
+<td>Suivre l'avancement de ma commande</td>
+<td>Savoir où en est ma prestation</td>
+</tr>
+<tr>
+<td>US-13</td>
+<td>Client</td>
+<td>Modifier ou annuler ma commande (si statut RECUE)</td>
+<td>Corriger une erreur ou changer d'avis</td>
+</tr>
+<tr>
+<td>US-14</td>
+<td>Client</td>
+<td>Laisser un avis sur une commande terminée</td>
+<td>Partager mon retour d'expérience</td>
+</tr>
+<tr>
+<td>US-15</td>
+<td>Client</td>
+<td>Consulter et modifier mon profil</td>
+<td>Mettre à jour mes informations</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-employe">3.3 Employé</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>En tant que...</th>
+<th>Je veux...</th>
+<th>Afin de...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US-20</td>
+<td>Employé</td>
+<td>Voir toutes les commandes avec filtres</td>
+<td>Gérer les commandes quotidiennes</td>
+</tr>
+<tr>
+<td>US-21</td>
+<td>Employé</td>
+<td>Faire avancer le statut d'une commande</td>
+<td>Suivre le workflow de prestation</td>
+</tr>
+<tr>
+<td>US-22</td>
+<td>Employé</td>
+<td>Annuler une commande avec motif et mode de contact</td>
+<td>Informer le client en cas de problème</td>
+</tr>
+<tr>
+<td>US-23</td>
+<td>Employé</td>
+<td>Modérer les avis (valider/refuser)</td>
+<td>Contrôler le contenu public</td>
+</tr>
+<tr>
+<td>US-24</td>
+<td>Employé</td>
+<td>Gérer les menus et plats (CRUD)</td>
+<td>Mettre à jour l'offre traiteur</td>
+</tr>
+<tr>
+<td>US-25</td>
+<td>Employé</td>
+<td>Gérer les horaires d'ouverture</td>
+<td>Mettre à jour les informations de contact</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-administrateur">3.4 Administrateur</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>En tant que...</th>
+<th>Je veux...</th>
+<th>Afin de...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US-30</td>
+<td>Admin</td>
+<td>Créer un compte employé</td>
+<td>Intégrer un nouveau collaborateur</td>
+</tr>
+<tr>
+<td>US-31</td>
+<td>Admin</td>
+<td>Désactiver un compte employé</td>
+<td>Retirer l'accès d'un ancien collaborateur</td>
+</tr>
+<tr>
+<td>US-32</td>
+<td>Admin</td>
+<td>Consulter les statistiques de commandes par menu</td>
+<td>Analyser les performances commerciales</td>
+</tr>
+<tr>
+<td>US-33</td>
+<td>Admin</td>
+<td>Consulter le chiffre d'affaires avec filtres</td>
+<td>Piloter l'activité financière</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-workflow-git">4. Workflow Git</h2>
+<h3 id="41-strategie-de-branches">4.1 Stratégie de branches</h3>
+<pre><code>main ─────────────────────────────────────────── Production
+  └── develop ────────────────────────────────── Intégration
+        ├── feature/database-schema ──────────── Phase 2 : BDD
+        ├── feature/backend-api ──────────────── Phase 3-4 : API
+        ├── feature/mongodb-and-fixes ────────── Phase 3 : NoSQL + corrections
+        └── feature/deployment-prep ──────────── Phase 7 : Déploiement
+</code></pre>
+<h3 id="42-convention-de-commits">4.2 Convention de commits</h3>
+<p>Les messages de commit suivent un format sémantique :</p>
+<ul>
+<li><code>feat:</code> — nouvelle fonctionnalité</li>
+<li><code>fix:</code> — correction de bug</li>
+<li><code>chore:</code> — tâches de maintenance (config, CI, Docker)</li>
+<li><code>docs:</code> — documentation</li>
+<li><code>test:</code> — tests unitaires / e2e</li>
+<li><code>refactor:</code> — restructuration du code sans changement fonctionnel</li>
+</ul>
+<h3 id="43-workflow-de-merge">4.3 Workflow de merge</h3>
+<ol>
+<li>Développement sur <code>feature/*</code></li>
+<li>Merge dans <code>develop</code> (intégration)</li>
+<li>Tests et vérification</li>
+<li>Merge dans <code>main</code> (production)</li>
+<li>Push sur GitHub</li>
+</ol>
+<hr />
+<h2 id="5-outils-utilises">5. Outils utilisés</h2>
+<table>
+<thead>
+<tr>
+<th>Outil</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>VS Code</strong></td>
+<td>IDE principal (TypeScript, React, NestJS)</td>
+</tr>
+<tr>
+<td><strong>Git / GitHub</strong></td>
+<td>Versioning et hébergement du code</td>
+</tr>
+<tr>
+<td><strong>Trello</strong></td>
+<td>Board Kanban pour la gestion de projet</td>
+</tr>
+<tr>
+<td><strong>PostgreSQL (Neon)</strong></td>
+<td>Base de données relationnelle</td>
+</tr>
+<tr>
+<td><strong>MongoDB Atlas</strong></td>
+<td>Base de données NoSQL (statistiques)</td>
+</tr>
+<tr>
+<td><strong>Postman</strong></td>
+<td>Tests manuels des endpoints API</td>
+</tr>
+<tr>
+<td><strong>Chrome DevTools</strong></td>
+<td>Debug frontend et réseau</td>
+</tr>
+<tr>
+<td><strong>Vercel</strong></td>
+<td>Hébergement frontend</td>
+</tr>
+<tr>
+<td><strong>Vercel (serverless)</strong></td>
+<td>Hébergement backend API</td>
+</tr>
+</tbody>
+</table>
+</body></html>

@@ -56,7 +56,7 @@ La fiche menu affiche :
    - Email
    - Téléphone
    - Adresse postale
-   - Mot de passe (min. 8 caractères, avec majuscule, minuscule, chiffre et caractère spécial)
+   - Mot de passe (min. 10 caractères, avec majuscule, minuscule, chiffre et caractère spécial)
 3. Cliquer sur **« S'inscrire »**
 
 ### 3.2 Connexion
@@ -82,8 +82,8 @@ La fiche menu affiche :
    - **Nombre de personnes** : indiquer le nombre de convives (minimum affiché)
 3. Le prix est calculé automatiquement :
    - Prix du menu = prix/personne x nombre de personnes
-   - Frais de livraison (0€ à 20€ selon la distance)
-   - Réduction de 5% à partir de 50 personnes
+   - Frais de livraison : gratuit à Bordeaux, 5€ + 0,59€/km hors Bordeaux
+   - Réduction de 10% si le nombre de personnes dépasse le minimum du menu de 5 ou plus
 4. Cliquer sur **« Confirmer la commande »**
 
 ### 3.5 Suivre ses commandes
@@ -101,7 +101,7 @@ La fiche menu affiche :
 ### 3.6 Annuler une commande
 
 1. Ouvrir le détail de la commande
-2. Si le statut le permet (Reçue, Acceptée, ou En préparation), le bouton **« Annuler »** est affiché
+2. Si le statut est **« Reçue »** (avant acceptation par l'équipe), le bouton **« Annuler »** est affiché
 3. Cliquer sur **« Annuler la commande »** et confirmer
 
 ### 3.7 Laisser un avis

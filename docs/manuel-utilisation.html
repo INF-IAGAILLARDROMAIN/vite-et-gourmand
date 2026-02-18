@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"><title>Manuel d'Utilisation</title><style>
+@page { size: A4; margin: 2cm; }
+body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; line-height: 1.6; color: #1e293b; max-width: 800px; margin: 0 auto; padding: 20px; }
+h1 { font-size: 22pt; color: #b45309; border-bottom: 2px solid #fbbf24; padding-bottom: 8px; margin-top: 30px; page-break-after: avoid; }
+h2 { font-size: 16pt; color: #92400e; margin-top: 25px; page-break-after: avoid; }
+h3 { font-size: 13pt; color: #78350f; margin-top: 18px; page-break-after: avoid; }
+h4 { font-size: 11pt; color: #78350f; margin-top: 12px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10pt; page-break-inside: avoid; }
+th, td { border: 1px solid #cbd5e1; padding: 6px 10px; text-align: left; }
+th { background-color: #fef3c7; font-weight: 600; }
+tr:nth-child(even) { background-color: #fafaf9; }
+code { background-color: #f1f5f9; padding: 1px 4px; border-radius: 3px; font-size: 9.5pt; }
+pre { background-color: #1e293b; color: #e2e8f0; padding: 12px; border-radius: 6px; font-size: 9pt; overflow-x: auto; white-space: pre-wrap; page-break-inside: avoid; }
+pre code { background: none; color: inherit; }
+blockquote { border-left: 3px solid #fbbf24; padding-left: 12px; color: #475569; font-style: italic; margin: 12px 0; }
+strong { color: #0f172a; }
+hr { border: none; border-top: 1px solid #e2e8f0; margin: 20px 0; }
+ul, ol { padding-left: 20px; }
+li { margin-bottom: 3px; }
+img { max-width: 100%; height: auto; margin: 10px 0; }
+.header-banner { background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 30px; border-radius: 12px; margin-bottom: 30px; text-align: center; }
+.header-banner h1 { border: none; color: #78350f; font-size: 28pt; margin: 0; }
+.header-banner p { color: #92400e; font-size: 12pt; margin: 8px 0 0 0; }
+.back-btn { display: inline-block; margin-bottom: 16px; padding: 8px 20px; background: #b45309; color: white; text-decoration: none; border-radius: 6px; font-size: 10pt; cursor: pointer; }
+.back-btn:hover { background: #92400e; }
+@media print { .back-btn { display: none; } }
+</style></head>
+<body>
+<a href="javascript:void(0)" class="back-btn" onclick="history.back()">&#8592; Retour</a>
+<div class="header-banner">
+<h1>Manuel d'Utilisation</h1>
+<p>Vite \& Gourmand — Traiteur Événementiel</p>
+</div>
+<h2 id="1-acces-a-lapplication">1. Accès à l'application</h2>
+<ul>
+<li><strong>Site public</strong> : <code>http://localhost:3001</code> (développement)</li>
+<li><strong>Back-office</strong> : <code>http://localhost:3001/admin</code></li>
+</ul>
+<hr />
+<h2 id="2-partie-publique-visiteur">2. Partie publique (visiteur)</h2>
+<h3 id="21-page-daccueil">2.1 Page d'accueil</h3>
+<p>La page d'accueil présente :
+- Une bannière d'accroche avec les chiffres clés (500+ événements, 98% satisfaction, 5 étoiles)
+- Les points forts du service (6 cartes : menus, livraison, allergènes, fraîcheur, service, prix)
+- Les témoignages de clients satisfaits
+- Un appel à l'action vers le catalogue</p>
+<h3 id="22-consulter-les-menus">2.2 Consulter les menus</h3>
+<ol>
+<li>Cliquer sur <strong>« Découvrir nos menus »</strong> ou <strong>« Nos menus »</strong> dans la navigation</li>
+<li>Utiliser les filtres disponibles :</li>
+<li><strong>Recherche</strong> : saisir un mot-clé dans le champ de recherche</li>
+<li><strong>Thème</strong> : sélectionner un thème (Noël, Pâques, Classique, Événement)</li>
+<li><strong>Régime</strong> : sélectionner un régime alimentaire</li>
+<li><strong>Budget</strong> : définir un prix maximum par personne</li>
+<li>Cliquer sur <strong>« Voir le détail »</strong> pour accéder à la fiche complète d'un menu</li>
+</ol>
+<h3 id="23-detail-dun-menu">2.3 Détail d'un menu</h3>
+<p>La fiche menu affiche :
+- Photo du menu
+- Titre, description et conditions
+- Prix par personne et minimum de personnes requis
+- Tags (thème et régime)
+- Composition complète : entrées, plats, desserts avec les allergènes de chaque plat
+- Bouton de commande (nécessite d'être connecté)</p>
+<h3 id="24-formulaire-de-contact">2.4 Formulaire de contact</h3>
+<ol>
+<li>Aller sur la page <strong>« Contact »</strong></li>
+<li>Remplir le formulaire : nom, email, sujet, message</li>
+<li>Cliquer sur <strong>« Envoyer »</strong></li>
+<li>Un email est envoyé à l'équipe Vite &amp; Gourmand</li>
+</ol>
+<hr />
+<h2 id="3-espace-client">3. Espace client</h2>
+<h3 id="31-inscription">3.1 Inscription</h3>
+<ol>
+<li>Cliquer sur <strong>« Inscription »</strong> dans la navigation</li>
+<li>Remplir le formulaire :</li>
+<li>Nom et prénom</li>
+<li>Email</li>
+<li>Téléphone</li>
+<li>Adresse postale</li>
+<li>Mot de passe (min. 10 caractères, avec majuscule, minuscule, chiffre et caractère spécial)</li>
+<li>Cliquer sur <strong>« S'inscrire »</strong></li>
+</ol>
+<h3 id="32-connexion">3.2 Connexion</h3>
+<ol>
+<li>Cliquer sur <strong>« Connexion »</strong> dans la navigation</li>
+<li>Saisir email et mot de passe</li>
+<li>Cliquer sur <strong>« Se connecter »</strong></li>
+</ol>
+<h3 id="33-mot-de-passe-oublie">3.3 Mot de passe oublié</h3>
+<ol>
+<li>Sur la page de connexion, cliquer sur <strong>« Mot de passe oublié ? »</strong></li>
+<li>Saisir l'adresse email du compte</li>
+<li>Cliquer sur <strong>« Envoyer »</strong></li>
+<li>Suivre le lien reçu par email pour réinitialiser le mot de passe</li>
+</ol>
+<h3 id="34-commander-un-menu">3.4 Commander un menu</h3>
+<ol>
+<li>Depuis la fiche d'un menu, cliquer sur <strong>« Commander »</strong></li>
+<li>Remplir le formulaire de commande :</li>
+<li><strong>Date de prestation</strong> : choisir la date de l'événement</li>
+<li><strong>Heure</strong> : choisir l'heure de livraison</li>
+<li><strong>Adresse</strong> : indiquer l'adresse de livraison</li>
+<li><strong>Nombre de personnes</strong> : indiquer le nombre de convives (minimum affiché)</li>
+<li>Le prix est calculé automatiquement :</li>
+<li>Prix du menu = prix/personne x nombre de personnes</li>
+<li>Frais de livraison : gratuit à Bordeaux, 5€ + 0,59€/km hors Bordeaux</li>
+<li>Réduction de 10% si le nombre de personnes dépasse le minimum du menu de 5 ou plus</li>
+<li>Cliquer sur <strong>« Confirmer la commande »</strong></li>
+</ol>
+<h3 id="35-suivre-ses-commandes">3.5 Suivre ses commandes</h3>
+<ol>
+<li>Cliquer sur l'icône utilisateur puis <strong>« Mon compte »</strong></li>
+<li>Cliquer sur <strong>« Voir toutes mes commandes »</strong></li>
+<li>Chaque commande affiche :</li>
+<li>Numéro de commande</li>
+<li>Menu commandé</li>
+<li>Date et heure de prestation</li>
+<li>Statut actuel (avec badge coloré)</li>
+<li>Montant total</li>
+<li>Cliquer sur une commande pour voir le détail et l'historique des statuts</li>
+</ol>
+<h3 id="36-annuler-une-commande">3.6 Annuler une commande</h3>
+<ol>
+<li>Ouvrir le détail de la commande</li>
+<li>Si le statut est <strong>« Reçue »</strong> (avant acceptation par l'équipe), le bouton <strong>« Annuler »</strong> est affiché</li>
+<li>Cliquer sur <strong>« Annuler la commande »</strong> et confirmer</li>
+</ol>
+<h3 id="37-laisser-un-avis">3.7 Laisser un avis</h3>
+<ol>
+<li>Ouvrir le détail d'une commande livrée</li>
+<li>Si aucun avis n'a été déposé, le formulaire d'avis apparaît</li>
+<li>Attribuer une note (1 à 5 étoiles)</li>
+<li>Rédiger un commentaire</li>
+<li>Cliquer sur <strong>« Envoyer l'avis »</strong></li>
+<li>L'avis sera visible après validation par l'équipe</li>
+</ol>
+<hr />
+<h2 id="4-back-office-employe">4. Back-office (employé)</h2>
+<h3 id="41-acces">4.1 Accès</h3>
+<ol>
+<li>Se connecter avec un compte employé ou administrateur</li>
+<li>Le menu de navigation affiche un lien <strong>« Admin »</strong></li>
+<li>Le back-office est organisé avec un menu latéral</li>
+</ol>
+<h3 id="42-dashboard">4.2 Dashboard</h3>
+<p>La page d'accueil du back-office affiche :
+- <strong>Commandes totales</strong> : nombre total de commandes
+- <strong>Chiffre d'affaires</strong> : total cumulé
+- <strong>Menus actifs</strong> : nombre de menus en catalogue
+- <strong>Statistiques par menu</strong> : tableau détaillé (commandes et CA par menu)</p>
+<h3 id="43-gestion-des-commandes">4.3 Gestion des commandes</h3>
+<ol>
+<li>Aller dans <strong>« Commandes »</strong></li>
+<li>Utiliser la recherche ou le filtre par statut pour trouver une commande</li>
+<li>Chaque commande affiche :</li>
+<li>Numéro, statut, menu, client, date, montant</li>
+<li>Bouton pour avancer au statut suivant</li>
+<li>Cliquer sur le bouton de statut pour faire progresser la commande :</li>
+<li>Reçue → Acceptée → En préparation → En livraison → Livrée → Retour matériel → Terminée</li>
+</ol>
+<h3 id="44-moderation-des-avis">4.4 Modération des avis</h3>
+<ol>
+<li>Aller dans <strong>« Avis »</strong></li>
+<li>Les avis en attente de modération sont listés avec :</li>
+<li>Nom du client et date</li>
+<li>Menu concerné</li>
+<li>Note (étoiles) et commentaire</li>
+<li>Pour chaque avis :</li>
+<li>Cliquer sur ✓ (vert) pour <strong>valider</strong> l'avis</li>
+<li>Cliquer sur ✗ (rouge) pour <strong>refuser</strong> l'avis</li>
+</ol>
+<h3 id="45-gestion-des-menus">4.5 Gestion des menus</h3>
+<ol>
+<li>Aller dans <strong>« Menus »</strong></li>
+<li>La liste affiche tous les menus avec prix, minimum personnes, stock et thèmes</li>
+<li>Possibilité de supprimer un menu via l'icône poubelle</li>
+</ol>
+<hr />
+<h2 id="5-back-office-administrateur">5. Back-office (administrateur)</h2>
+<p>L'administrateur a accès à toutes les fonctionnalités employé, plus :</p>
+<h3 id="51-gestion-des-horaires">5.1 Gestion des horaires</h3>
+<ol>
+<li>Aller dans <strong>« Horaires »</strong></li>
+<li>Modifier les heures d'ouverture et fermeture pour chaque jour</li>
+<li>Les modifications sont enregistrées en temps réel</li>
+</ol>
+<h3 id="52-creation-demployes">5.2 Création d'employés</h3>
+<ol>
+<li>Aller dans <strong>« Employés »</strong></li>
+<li>Remplir le formulaire : nom, prénom, email, téléphone, adresse</li>
+<li>Un mot de passe temporaire est généré automatiquement</li>
+<li>Cliquer sur <strong>« Créer l'employé »</strong></li>
+</ol>
+<hr />
+<h2 id="6-comptes-de-demonstration">6. Comptes de démonstration</h2>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Email</th>
+<th>Mot de passe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Administrateur</td>
+<td>admin@viteetgourmand.fr</td>
+<td>Admin@2026!</td>
+</tr>
+<tr>
+<td>Employe</td>
+<td>employe@viteetgourmand.fr</td>
+<td>Employe@2026!</td>
+</tr>
+<tr>
+<td>Utilisateur</td>
+<td>user@viteetgourmand.fr</td>
+<td>User@2026!</td>
+</tr>
+</tbody>
+</table>
+<p>Pour tester le parcours complet :
+1. Se connecter avec le compte <strong>utilisateur</strong> pour tester la commande et les avis
+2. Se connecter avec le compte <strong>employé</strong> pour tester la gestion des commandes
+3. Se connecter avec le compte <strong>administrateur</strong> pour tester la gestion complète</p>
+</body></html>

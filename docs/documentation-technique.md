@@ -3,19 +3,21 @@
 ## 1. Presentation du projet
 
 ### 1.1 Contexte
-**Vite & Gourmand** est une application web pour un traiteur événementiel basé à Bordeaux. Elle permet aux clients de consulter les menus, passer des commandes pour des événements (mariages, anniversaires, séminaires...) et suivre leurs commandes. Un back-office permet à l'équipe de gérer les commandes, modérer les avis et administrer les contenus.
+**Vite & Gourmand** est le projet que j'ai développé dans le cadre de mon ECF pour le titre professionnel Développeur Web et Web Mobile. Il s'agit d'une application web complète pour un traiteur événementiel basé à Bordeaux. L'idée est simple : permettre aux clients de consulter les menus, passer des commandes pour leurs événements (mariages, anniversaires, séminaires...) et suivre l'avancement de leurs prestations. Côté équipe, un back-office permet de gérer les commandes au quotidien, modérer les avis et administrer les contenus du site.
 
 ### 1.2 Objectifs
-- Permettre aux visiteurs de découvrir l'offre traiteur et les menus disponibles
-- Offrir un parcours de commande simple et complet pour les clients
-- Fournir un back-office efficace pour la gestion quotidienne
-- Garantir la sécurité des données et la conformité RGPD
+Les objectifs que je me suis fixés pour ce projet :
+- Proposer aux visiteurs une vitrine claire et attractive de l'offre traiteur
+- Offrir un parcours de commande simple, de la consultation du menu jusqu'à la confirmation
+- Mettre à disposition un back-office pratique pour l'équipe au quotidien
+- Assurer la sécurité des données et le respect du RGPD
 
 ### 1.3 Public cible
-- **Visiteurs** : particuliers et professionnels recherchant un traiteur
-- **Clients inscrits** : utilisateurs souhaitant commander et suivre leurs commandes
-- **Employés** : équipe opérationnelle gérant les commandes au quotidien
-- **Administrateur** : gérant de l'entreprise avec accès complet
+L'application s'adresse à quatre profils d'utilisateurs :
+- **Visiteurs** : particuliers ou professionnels qui découvrent le site et cherchent un traiteur
+- **Clients inscrits** : utilisateurs qui veulent passer et suivre leurs commandes
+- **Employés** : l'équipe opérationnelle qui gère les commandes et le contenu
+- **Administrateur** : le gérant, avec un accès complet à toutes les fonctionnalités
 
 ---
 
@@ -23,7 +25,7 @@
 
 ### 2.1 Vue d'ensemble
 
-L'application suit une architecture **client-serveur** avec séparation complète frontend/backend :
+J'ai structuré l'application selon une architecture **client-serveur** classique, avec une séparation nette entre le frontend et le backend. Le frontend (Next.js) s'occupe de l'affichage et de l'expérience utilisateur, tandis que le backend (NestJS) gère la logique métier et les données via une API REST :
 
 ```
 ┌─────────────────────┐     HTTP/REST     ┌─────────────────────┐
@@ -48,13 +50,15 @@ L'application suit une architecture **client-serveur** avec séparation complèt
 
 ### 2.2 Frontend - Next.js 16
 
+Pour le frontend, j'ai travaillé avec l'aide de **Claude Code** (Anthropic), un assistant IA intégré directement dans **Visual Studio Code**. Cet outil m'a permis d'accélérer le développement tout en gardant la main sur les choix d'architecture et de design. J'ai fait le choix de travailler en **JSX/TSX** (la syntaxe de React) pour avoir un rendu plus qualitatif et un contrôle fin sur chaque composant de l'interface.
+
 **Choix technologiques :**
-- **Next.js 16 (App Router)** : framework React avec rendu serveur, routing file-system et optimisations SEO natives
-- **React 19.2** : dernière version stable avec les hooks
-- **TypeScript 5** : typage statique pour la fiabilité du code
-- **Tailwind CSS v4** : framework CSS utility-first, configuration via `@theme inline` (CSS-first)
-- **Framer Motion 12** : bibliothèque d'animations performantes (GPU-accelerated)
-- **Lucide React** : icônes SVG tree-shakeable (seules les icônes utilisées sont incluses dans le bundle)
+- **Next.js 16 (App Router)** : j'ai choisi ce framework React pour son rendu serveur natif, son routing basé sur le système de fichiers et ses optimisations SEO intégrées
+- **React 19.2** : la dernière version stable, avec les hooks pour une gestion propre de l'état
+- **TypeScript 5** : le typage statique me permet de détecter les erreurs avant l'exécution et rend le code plus fiable
+- **Tailwind CSS v4** : framework CSS utility-first que j'apprécie pour sa rapidité de développement, configuré via `@theme inline` (approche CSS-first)
+- **Framer Motion 12** : pour des animations fluides et performantes (accélérées par le GPU)
+- **Lucide React** : icônes SVG légères et tree-shakeable (seules celles utilisées sont incluses dans le bundle final)
 
 **Architecture des pages (22 routes) :**
 
@@ -82,24 +86,26 @@ L'application suit une architecture **client-serveur** avec séparation complèt
 | `/admin/employes` | Gestion des employés | Admin |
 
 **Composants réutilisables :**
-- `Button` : bouton avec variantes (primary, secondary, outline, ghost, danger) et état loading
-- `Input` : champ de formulaire avec label et erreur
-- `Textarea` : zone de texte avec label et erreur
-- `Card` : carte avec animation de survol (Framer Motion)
-- `Badge` : badge/étiquette coloré
+J'ai créé une bibliothèque de composants réutilisables pour garder une cohérence visuelle sur tout le site :
+- `Button` : bouton avec 5 variantes (primary, secondary, outline, ghost, danger) et un état loading
+- `Input` / `Textarea` : champs de formulaire avec gestion du label et des erreurs
+- `Card` : carte avec animation de survol grâce à Framer Motion
+- `Badge` : étiquette colorée pour les tags et statuts
 
 **Gestion de l'authentification :**
-L'authentification est gérée côté client via un React Context (`AuthProvider`). Le token JWT est stocké dans `localStorage` et automatiquement ajouté aux en-têtes des requêtes API via le client HTTP centralisé (`lib/api.ts`).
+J'ai mis en place l'authentification côté client via un React Context (`AuthProvider`). Concrètement, le token JWT est stocké dans le `localStorage` du navigateur et ajouté automatiquement aux en-têtes de chaque requête API grâce au client HTTP centralisé (`lib/api.ts`). C'est simple et ça fonctionne bien pour ce type de projet.
 
 ### 2.3 Backend - NestJS 11
 
+Pour le backend, j'ai opté pour NestJS qui offre une structure modulaire très claire. Chaque fonctionnalité est isolée dans son propre module, ce qui facilite la maintenance et les tests.
+
 **Choix technologiques :**
-- **NestJS 11** : framework Node.js modulaire avec injection de dépendances
-- **Prisma 7** : ORM type-safe avec génération automatique des types
-- **PostgreSQL** : base de données relationnelle robuste
-- **Passport + JWT** : authentification stateless par tokens
-- **class-validator** : validation déclarative des DTOs
-- **Nodemailer** : envoi d'emails (contact, reset password)
+- **NestJS 11** : framework Node.js modulaire avec injection de dépendances native
+- **Prisma 7** : ORM type-safe qui génère automatiquement les types TypeScript depuis le schéma
+- **PostgreSQL** : base de données relationnelle robuste, hébergée sur Neon
+- **Passport + JWT** : authentification stateless par tokens, simple et efficace
+- **class-validator** : validation déclarative des DTOs (on décore les propriétés et NestJS valide automatiquement)
+- **Nodemailer** : envoi d'emails pour le contact et la réinitialisation de mot de passe
 
 **Modules de l'API (8 modules métier) :**
 
@@ -123,7 +129,7 @@ L'authentification est gérée côté client via un React Context (`AuthProvider
 
 ### 2.4 Base de données - PostgreSQL
 
-Le schéma est défini dans Prisma et comporte :
+J'ai défini tout le schéma de données dans Prisma, ce qui me permet de générer automatiquement les migrations SQL et les types TypeScript. Le schéma comporte :
 - **12 modèles** (tables)
 - **3 enums** (PlatType, CommandeStatut, AvisStatut)
 - **4 tables de liaison** (MenuTheme, MenuRegime, MenuPlat, PlatAllergene)
@@ -152,36 +158,38 @@ Plat (N) ──── (N) Allergene (via PlatAllergene)
 
 ## 3. Securite
 
+La sécurité a été un point important tout au long du développement. Voici les mesures que j'ai mises en place.
+
 ### 3.1 Authentification
 
-- **JWT (JSON Web Token)** : tokens signés avec un secret configurable, expiration paramétrable (24h par défaut)
-- **Bcrypt** : hachage des mots de passe avec salt (10 rounds)
-- **Stratégie Passport** : extraction automatique du token depuis l'en-tête `Authorization: Bearer <token>`
+- **JWT (JSON Web Token)** : j'utilise des tokens signés avec un secret configurable. L'expiration est paramétrable (24h par défaut)
+- **Bcrypt** : les mots de passe sont hachés avec un salt de 10 rounds — même en cas de fuite de base, les mots de passe restent protégés
+- **Stratégie Passport** : le token est extrait automatiquement depuis l'en-tête `Authorization: Bearer <token>`
 
 ### 3.2 Autorisation (RBAC)
 
-Trois rôles hiérarchiques :
-1. **Utilisateur** : accès à son espace client uniquement
-2. **Employé** : accès au back-office (commandes, avis)
-3. **Administrateur** : accès complet (horaires, employés, statistiques)
+J'ai mis en place trois rôles hiérarchiques pour contrôler l'accès aux différentes parties de l'application :
+1. **Utilisateur** : accès uniquement à son espace client personnel
+2. **Employé** : accès au back-office pour gérer les commandes et les avis
+3. **Administrateur** : accès complet, y compris la gestion des horaires, des employés et les statistiques
 
-Implémentation via un décorateur `@Roles()` et un guard `RolesGuard` NestJS.
+L'implémentation repose sur un décorateur personnalisé `@Roles()` et un guard `RolesGuard` dans NestJS.
 
 ### 3.3 Validation des données
 
-- Validation sur tous les DTOs avec `class-validator` (email valide, longueurs, formats...)
-- Politique de mot de passe fort : minimum 10 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
-- Protection anti-énumération : la route `forgot-password` retourne toujours un succès, même si l'email n'existe pas
+- Tous les DTOs sont validés automatiquement grâce à `class-validator` (format email, longueurs, etc.)
+- J'ai imposé une politique de mot de passe solide : minimum 10 caractères, avec au moins 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial
+- Pour éviter l'énumération de comptes, la route `forgot-password` retourne toujours un message de succès, que l'email existe ou non
 
 ### 3.4 CORS
 
-La configuration CORS autorise uniquement l'origine du frontend (`http://localhost:3001` en développement).
+La configuration CORS n'autorise que l'origine du frontend (`http://localhost:3001` en développement, l'URL Vercel en production).
 
 ### 3.5 Conformité RGPD
 
-- Page de mentions légales avec informations sur la collecte de données
-- Droit d'accès et de suppression mentionné
-- Données personnelles stockées de manière sécurisée (mots de passe hashés)
+- Une page de mentions légales détaille la collecte et l'utilisation des données
+- Les droits d'accès et de suppression des données sont mentionnés
+- Les mots de passe sont hashés et les données personnelles stockées de manière sécurisée
 
 ---
 
@@ -189,7 +197,7 @@ La configuration CORS autorise uniquement l'origine du frontend (`http://localho
 
 ### 4.1 Catalogue de menus
 
-Les menus sont consultables publiquement et filtrables par :
+Les visiteurs peuvent consulter librement tous les menus et les filtrer par :
 - **Thème** : Noël, Pâques, Classique, Événement
 - **Régime alimentaire** : Classique, Végétarien, Végan, Sans gluten
 - **Budget maximum** : par prix/personne
@@ -199,42 +207,47 @@ Chaque menu affiche sa composition complète (entrées, plats, desserts) avec le
 
 ### 4.2 Processus de commande
 
-1. L'utilisateur sélectionne un menu
-2. Il remplit le formulaire : date, heure, adresse, nombre de personnes
-3. Le système calcule le prix :
+Le parcours de commande se déroule en quelques étapes :
+1. Le client choisit un menu dans le catalogue
+2. Il remplit le formulaire avec la date, l'heure, l'adresse de livraison et le nombre de personnes
+3. Le prix est calculé en temps réel à l'écran :
    - Prix du menu = prix/personne x nombre de personnes
-   - Livraison = 0€ (Bordeaux centre) à 20€ (périphérie)
-   - Réduction de 10% si le nombre de personnes dépasse le minimum du menu de 5 ou plus
-4. Validation et confirmation par email
+   - Livraison = gratuit à Bordeaux, sinon 5€ + 0,59€/km
+   - Une réduction de 10% s'applique automatiquement si le nombre de personnes dépasse le minimum du menu de 5 ou plus
+4. À la validation, une confirmation est envoyée par email
 
 ### 4.3 Workflow des commandes
+
+Chaque commande passe par un cycle de vie bien défini :
 
 ```
 RECUE ─> ACCEPTEE ─> EN_PREPARATION ─> EN_LIVRAISON ─> LIVREE ─> ATTENTE_RETOUR_MATERIEL ─> TERMINEE
 ```
 
-- Le client peut **annuler** sa commande tant que le statut est RECUE, ACCEPTEE ou EN_PREPARATION
-- L'employé fait avancer le statut étape par étape
-- Chaque changement de statut est enregistré dans l'historique (`CommandeHistorique`)
+- Le client peut **annuler** sa commande tant qu'elle n'a pas encore été acceptée par l'équipe (statut RECUE)
+- L'employé fait avancer le statut étape par étape depuis le back-office
+- Chaque changement de statut est horodaté et enregistré dans un historique (`CommandeHistorique`), ce qui permet au client de suivre l'avancement
 
 ### 4.4 Système d'avis
 
-- Un client peut laisser un avis (note 1-5 + commentaire) sur une commande livrée
-- Les avis sont soumis à modération par l'équipe (statut EN_ATTENTE -> VALIDE / REFUSE)
-- Seuls les avis validés sont visibles publiquement
+- Après une commande terminée, le client peut laisser un avis avec une note de 1 à 5 et un commentaire
+- Tous les avis passent par une modération : l'équipe peut les valider ou les refuser
+- Seuls les avis validés apparaissent sur le site public, ce qui garantit la qualité du contenu
 
 ### 4.5 Back-office
 
-Le back-office est accessible aux employés et administrateurs via `/admin`. Il offre :
-- Un **dashboard** avec les statistiques par menu (nombre de commandes, chiffre d'affaires)
-- La gestion des **commandes** avec avancement du workflow
-- La **modération des avis** (validation ou refus en un clic)
-- La gestion des **horaires** d'ouverture
-- La **création d'employés** (admin uniquement)
+J'ai développé un back-office complet accessible via `/admin`. Il permet à l'équipe de :
+- Visualiser un **dashboard** avec les statistiques par menu (nombre de commandes, chiffre d'affaires)
+- Gérer les **commandes** et faire avancer leur statut dans le workflow
+- **Modérer les avis** en un clic (valider ou refuser)
+- Mettre à jour les **horaires** d'ouverture
+- **Créer des comptes employés** (réservé à l'administrateur)
 
 ---
 
 ## 5. Choix techniques justifies
+
+Voici les principaux choix techniques que j'ai faits et pourquoi.
 
 ### 5.1 Next.js 16 vs autres frameworks
 
@@ -245,7 +258,7 @@ Le back-office est accessible aux employés et administrateurs via `/admin`. Il 
 | Routing | File-system | React Router | Vue Router |
 | Écosystème | Très riche | Riche | Bon |
 
-**Choix : Next.js** pour le SEO natif, les performances optimales et le routing simplifié.
+**Mon choix : Next.js** — le SEO natif était un vrai plus pour un site vitrine de traiteur, et le routing file-system simplifie beaucoup l'organisation du code.
 
 ### 5.2 NestJS vs Express
 
@@ -256,7 +269,7 @@ Le back-office est accessible aux employés et administrateurs via `/admin`. Il 
 | Injection de dépendances | Oui | Non |
 | Validation | Intégrée (pipes) | Middleware |
 
-**Choix : NestJS** pour l'architecture modulaire, l'injection de dépendances et le support TypeScript natif.
+**Mon choix : NestJS** — sa structure modulaire me permet de garder un code propre et organisé, et le TypeScript natif évite les erreurs classiques.
 
 ### 5.3 Prisma vs TypeORM
 
@@ -267,7 +280,7 @@ Le back-office est accessible aux employés et administrateurs via `/admin`. Il 
 | Syntaxe | Déclarative (schéma) | Decorators |
 | Performance | Très bonne | Bonne |
 
-**Choix : Prisma** pour le typage automatique, les migrations simplifiées et la syntaxe déclarative.
+**Mon choix : Prisma** — le fait de définir le schéma dans un seul fichier et d'obtenir automatiquement les types TypeScript et les migrations est un gain de temps énorme.
 
 ### 5.4 Tailwind CSS v4 vs CSS classique / SCSS
 
@@ -278,11 +291,13 @@ Le back-office est accessible aux employés et administrateurs via `/admin`. Il 
 | Responsive | Utilitaires natifs | Media queries | Media queries |
 | Maintenance | Excellente | Difficile à scale | Bonne |
 
-**Choix : Tailwind CSS v4** pour la productivité, le bundle minimal et la configuration CSS-first.
+**Mon choix : Tailwind CSS v4** — j'apprécie pouvoir styliser directement dans le JSX sans jongler entre fichiers CSS. Le bundle final est minimal grâce au purge automatique.
 
 ---
 
 ## 6. SEO et performance
+
+J'ai porté une attention particulière au référencement et aux performances, car un site de traiteur doit être bien positionné sur Google et charger rapidement.
 
 ### 6.1 Optimisations SEO
 
@@ -309,7 +324,7 @@ Le back-office est accessible aux employés et administrateurs via `/admin`. Il 
 | Environnement | Frontend | Backend | BDD |
 |---------------|----------|---------|-----|
 | Développement | localhost:3001 | localhost:3000 | PostgreSQL local ou Neon |
-| Production | Vercel | Railway | Neon |
+| Production | Vercel | Vercel (serverless) | Neon |
 
 ### 7.2 Variables d'environnement
 
@@ -336,7 +351,7 @@ NEXT_PUBLIC_API_URL=     # URL de l'API backend
 
 ## 8. Données de démonstration
 
-Le fichier `seed.ts` alimente la base avec des données réalistes :
+Pour tester et présenter l'application, j'ai créé un fichier `seed.ts` qui remplit la base avec des données réalistes :
 
 - **3 rôles** : administrateur, employé, utilisateur
 - **3 utilisateurs** : un admin, un employé, un client
@@ -353,7 +368,7 @@ Le fichier `seed.ts` alimente la base avec des données réalistes :
 
 ## 9. Modele Conceptuel de Donnees (MCD)
 
-Le MCD ci-dessous représente l'ensemble des entités du système et leurs associations. Il a été conçu à partir de l'Annexe 1 du cahier des charges et étendu pour couvrir les besoins fonctionnels complets.
+Le MCD ci-dessous représente l'ensemble des entités de l'application et leurs associations. Je me suis basé sur l'Annexe 1 du cahier des charges (MCD fourni) et je l'ai étendu pour couvrir tous les besoins fonctionnels identifiés (images de menus, historique de commandes, etc.).
 
 ```mermaid
 erDiagram
@@ -797,7 +812,7 @@ classDiagram
 
 ### 13.1 Justification
 
-L'ECF exige l'utilisation d'une base de données NoSQL en complément du SQL. MongoDB Atlas a été choisi pour stocker les **statistiques agrégées** du dashboard admin :
+L'ECF demande d'utiliser une base de données NoSQL en complément du SQL. J'ai choisi MongoDB Atlas pour stocker les **statistiques agrégées** du dashboard admin, car c'est un cas d'usage où le NoSQL a un vrai avantage par rapport au SQL :
 
 | Critère | PostgreSQL (SQL) | MongoDB (NoSQL) |
 |---------|-----------------|-----------------|
@@ -841,7 +856,7 @@ db.order_stats.aggregate([
 
 ### 13.4 Synchronisation
 
-Les données sont synchronisées de PostgreSQL vers MongoDB de manière **non-bloquante** :
-- A la création d'une commande → `upsertOrderStat()` (async, .catch silencieux)
-- A chaque changement de statut → `upsertOrderStat()` (async, .catch silencieux)
-- Synchronisation complète manuelle → `POST /api/admin/stats/sync`
+J'ai mis en place une synchronisation **non-bloquante** entre PostgreSQL et MongoDB. L'idée est que si MongoDB est momentanément indisponible, ça ne bloque pas le fonctionnement normal de l'application :
+- À la création d'une commande → `upsertOrderStat()` est appelé en asynchrone (avec .catch silencieux)
+- À chaque changement de statut → même mécanisme
+- En cas de besoin, une synchronisation complète est disponible via `POST /api/admin/stats/sync`
