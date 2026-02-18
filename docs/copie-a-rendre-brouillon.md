@@ -4,7 +4,8 @@
 
 - **NOM** : GAILLARD
 - **Prenom** : Romain
-- **Date de naissance** : [A REMPLIR]
+- **Date de naissance** : 12/06/1998
+- **Lieu de naissance** : Auray (56 - Morbihan)
 
 ---
 
