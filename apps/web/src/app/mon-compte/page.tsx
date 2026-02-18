@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { User, ShoppingBag, Star, LogOut } from 'lucide-react';
+import { User, ShoppingBag, Star, LogOut, ClipboardList, HelpCircle } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 
 export default function MonComptePage() {
@@ -23,9 +23,14 @@ export default function MonComptePage() {
     );
   }
 
+  const isAdmin = user.role === 'administrateur';
+  const isEmployee = user.role === 'employe' || isAdmin;
+
   const links = [
     { href: '/mon-compte/commandes', icon: ShoppingBag, label: 'Mes commandes', desc: 'Suivre et gérer vos commandes' },
     { href: '/menus', icon: Star, label: 'Commander', desc: 'Parcourir nos menus et passer commande' },
+    ...(isAdmin ? [{ href: '/admin/suivi-projet', icon: ClipboardList, label: 'Suivi de projet', desc: 'Suivre l\'avancement du projet' }] : []),
+    ...(isEmployee ? [{ href: '/admin/faq', icon: HelpCircle, label: 'FAQ', desc: 'Questions fréquentes et aide' }] : []),
   ];
 
   return (

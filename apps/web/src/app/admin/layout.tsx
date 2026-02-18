@@ -3,17 +3,19 @@
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, ShoppingBag, Utensils, Star, Clock, Users, ArrowLeft } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Utensils, Star, Clock, Users, ArrowLeft, ClipboardList, HelpCircle } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
-const SIDEBAR_LINKS = [
+const SIDEBAR_LINKS: Array<{ href: string; icon: React.ComponentType<{ className?: string }>; label: string; adminOnly?: boolean }> = [
   { href: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/admin/commandes', icon: ShoppingBag, label: 'Commandes' },
   { href: '/admin/menus', icon: Utensils, label: 'Menus' },
   { href: '/admin/avis', icon: Star, label: 'Avis' },
   { href: '/admin/horaires', icon: Clock, label: 'Horaires' },
-  { href: '/admin/employes', icon: Users, label: 'Employés' },
+  { href: '/admin/employes', icon: Users, label: 'Employés', adminOnly: true },
+  { href: '/admin/suivi-projet', icon: ClipboardList, label: 'Suivi de projet', adminOnly: true },
+  { href: '/admin/faq', icon: HelpCircle, label: 'FAQ' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -45,8 +47,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </Link>
             <nav className="space-y-1">
               {SIDEBAR_LINKS.map((link) => {
-                // Hide employees link for non-admins
-                if (link.href === '/admin/employes' && user.role !== 'administrateur') return null;
+                // Hide admin-only links for non-admins
+                if (link.adminOnly && user.role !== 'administrateur') return null;
 
                 const isActive = pathname === link.href;
                 return (
