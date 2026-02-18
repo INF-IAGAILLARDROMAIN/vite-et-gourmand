@@ -45,7 +45,17 @@ export default function TestimonialsSection() {
             description: a.description,
             utilisateur: a.utilisateur || { prenom: 'Client', nom: '' },
           }));
-          setReviews(mapped);
+          // Always show at least 3 testimonials — supplement with fallbacks if needed
+          if (mapped.length < 3) {
+            const needed = 3 - mapped.length;
+            const apiIds = new Set(mapped.map((m) => m.description));
+            const extras = FALLBACK_TESTIMONIALS
+              .filter((f) => !apiIds.has(f.description))
+              .slice(0, needed);
+            setReviews([...mapped, ...extras]);
+          } else {
+            setReviews(mapped);
+          }
         }
       })
       .catch(() => { /* keep fallback */ });

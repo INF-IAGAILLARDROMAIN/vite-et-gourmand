@@ -9,6 +9,26 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log('Seeding database...');
 
+  // ==================== CLEANUP (reverse dependency order) ====================
+  console.log('Cleaning existing data...');
+  await prisma.avis.deleteMany();
+  await prisma.commandeHistorique.deleteMany();
+  await prisma.commande.deleteMany();
+  await prisma.menuImage.deleteMany();
+  await prisma.menuPlat.deleteMany();
+  await prisma.menuRegime.deleteMany();
+  await prisma.menuTheme.deleteMany();
+  await prisma.platAllergene.deleteMany();
+  await prisma.horaire.deleteMany();
+  await prisma.menu.deleteMany();
+  await prisma.plat.deleteMany();
+  await prisma.allergene.deleteMany();
+  await prisma.regime.deleteMany();
+  await prisma.theme.deleteMany();
+  await prisma.utilisateur.deleteMany();
+  await prisma.role.deleteMany();
+  console.log('Cleanup done.');
+
   // ==================== ROLES ====================
   const roleAdmin = await prisma.role.create({ data: { libelle: 'administrateur' } });
   const roleEmploye = await prisma.role.create({ data: { libelle: 'employe' } });
@@ -259,6 +279,31 @@ async function main() {
     ],
   });
 
+  // ==================== UTILISATEURS DEMO SUPPLEMENTAIRES ====================
+  const user2 = await prisma.utilisateur.create({
+    data: {
+      email: 'pierre.martin@email.com',
+      password: await hashPassword('Pierre@2026!'),
+      nom: 'Martin',
+      prenom: 'Pierre',
+      telephone: '0645678901',
+      adressePostale: '22 Rue du Pas-Saint-Georges, 33000 Bordeaux',
+      roleId: roleUser.id,
+    },
+  });
+
+  const user3 = await prisma.utilisateur.create({
+    data: {
+      email: 'sophie.leroy@email.com',
+      password: await hashPassword('Sophie@2026!'),
+      nom: 'Leroy',
+      prenom: 'Sophie',
+      telephone: '0678901234',
+      adressePostale: '5 Place Gambetta, 33000 Bordeaux',
+      roleId: roleUser.id,
+    },
+  });
+
   // ==================== COMMANDES DEMO ====================
   const commande1 = await prisma.commande.create({
     data: {
@@ -304,6 +349,55 @@ async function main() {
     ],
   });
 
+  // Commandes terminées pour user2 et user3
+  const commande3 = await prisma.commande.create({
+    data: {
+      numeroCommande: 'CMD-2026-003',
+      datePrestation: new Date('2026-01-20'),
+      heurePrestation: '12:00',
+      adresse: '22 Rue du Pas-Saint-Georges, 33000 Bordeaux',
+      prixMenu: 900.0,
+      nombrePersonnes: 20,
+      prixLivraison: 0,
+      statut: CommandeStatut.TERMINEE,
+      utilisateurId: user2.id,
+      menuId: menuGrandEvent.id,
+    },
+  });
+
+  const commande4 = await prisma.commande.create({
+    data: {
+      numeroCommande: 'CMD-2026-004',
+      datePrestation: new Date('2026-02-01'),
+      heurePrestation: '19:30',
+      adresse: '5 Place Gambetta, 33000 Bordeaux',
+      prixMenu: 168.0,
+      nombrePersonnes: 4,
+      prixLivraison: 0,
+      statut: CommandeStatut.TERMINEE,
+      utilisateurId: user3.id,
+      menuId: menuVegetarien.id,
+    },
+  });
+
+  // Historique statuts pour commandes 3 et 4
+  await prisma.commandeHistorique.createMany({
+    data: [
+      { statut: CommandeStatut.RECUE, date: new Date('2026-01-05T10:00:00'), commandeId: commande3.id },
+      { statut: CommandeStatut.ACCEPTEE, date: new Date('2026-01-05T14:00:00'), commandeId: commande3.id },
+      { statut: CommandeStatut.EN_PREPARATION, date: new Date('2026-01-19T08:00:00'), commandeId: commande3.id },
+      { statut: CommandeStatut.EN_LIVRAISON, date: new Date('2026-01-20T10:00:00'), commandeId: commande3.id },
+      { statut: CommandeStatut.LIVREE, date: new Date('2026-01-20T12:15:00'), commandeId: commande3.id },
+      { statut: CommandeStatut.TERMINEE, date: new Date('2026-01-20T12:30:00'), commandeId: commande3.id },
+      { statut: CommandeStatut.RECUE, date: new Date('2026-01-25T09:00:00'), commandeId: commande4.id },
+      { statut: CommandeStatut.ACCEPTEE, date: new Date('2026-01-25T11:00:00'), commandeId: commande4.id },
+      { statut: CommandeStatut.EN_PREPARATION, date: new Date('2026-01-31T08:00:00'), commandeId: commande4.id },
+      { statut: CommandeStatut.EN_LIVRAISON, date: new Date('2026-02-01T18:00:00'), commandeId: commande4.id },
+      { statut: CommandeStatut.LIVREE, date: new Date('2026-02-01T19:45:00'), commandeId: commande4.id },
+      { statut: CommandeStatut.TERMINEE, date: new Date('2026-02-01T20:00:00'), commandeId: commande4.id },
+    ],
+  });
+
   // Avis
   await prisma.avis.create({
     data: {
@@ -312,6 +406,26 @@ async function main() {
       statut: AvisStatut.VALIDE,
       utilisateurId: user.id,
       commandeId: commande1.id,
+    },
+  });
+
+  await prisma.avis.create({
+    data: {
+      note: 5,
+      description: 'Nous avons fait appel à Vite & Gourmand pour notre séminaire annuel de 20 personnes. Qualité irréprochable, équipe réactive et plats savoureux. Je recommande vivement pour tout événement professionnel.',
+      statut: AvisStatut.VALIDE,
+      utilisateurId: user2.id,
+      commandeId: commande3.id,
+    },
+  });
+
+  await prisma.avis.create({
+    data: {
+      note: 4,
+      description: "Un régal pour les papilles ! Le menu végétarien était parfait pour l'anniversaire de ma fille. Le risotto aux champignons et la panna cotta ont fait l'unanimité. Tout le monde a été bluffé.",
+      statut: AvisStatut.VALIDE,
+      utilisateurId: user3.id,
+      commandeId: commande4.id,
     },
   });
 
