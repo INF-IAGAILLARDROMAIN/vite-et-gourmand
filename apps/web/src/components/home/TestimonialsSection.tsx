@@ -1,10 +1,17 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { motion, useInView } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import { avis as avisApi } from '@/lib/api';
 import type { Avis } from '@/lib/types';
+
+const AVATAR_MAP: Record<string, string> = {
+  'Marie Dupont': '/images/testimonials/marie-dupont.jpg',
+  'Pierre Martin': '/images/testimonials/pierre-martin.jpg',
+  'Sophie Leroy': '/images/testimonials/sophie-leroy.jpg',
+};
 
 const FALLBACK_TESTIMONIALS = [
   {
@@ -101,9 +108,23 @@ export default function TestimonialsSection() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold text-sm">
-                  {t.utilisateur.prenom.charAt(0)}{t.utilisateur.nom.charAt(0)}
-                </div>
+                {(() => {
+                  const fullName = `${t.utilisateur.prenom} ${t.utilisateur.nom}`;
+                  const avatarSrc = AVATAR_MAP[fullName];
+                  return avatarSrc ? (
+                    <Image
+                      src={avatarSrc}
+                      alt={fullName}
+                      width={40}
+                      height={40}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold text-sm">
+                      {t.utilisateur.prenom.charAt(0)}{t.utilisateur.nom.charAt(0)}
+                    </div>
+                  );
+                })()}
                 <div>
                   <p className="font-semibold text-slate-900 text-sm">
                     {t.utilisateur.prenom} {t.utilisateur.nom}
