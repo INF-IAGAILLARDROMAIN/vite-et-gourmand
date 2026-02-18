@@ -39,7 +39,7 @@ export const auth = {
     request('/auth/register', { method: 'POST', body: JSON.stringify(data) }),
 
   login: (data: { email: string; password: string }) =>
-    request<{ access_token: string; user: { id: number; email: string; nom: string; prenom: string; role: string } }>(
+    request<{ accessToken: string; user: { id: number; email: string; nom: string; prenom: string; role: string } }>(
       '/auth/login', { method: 'POST', body: JSON.stringify(data) }
     ),
 
