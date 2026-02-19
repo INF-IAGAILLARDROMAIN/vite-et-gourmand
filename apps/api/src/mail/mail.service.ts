@@ -26,19 +26,109 @@ export class MailService {
     );
   }
 
+  private get frontendUrl(): string {
+    return this.configService.get<string>(
+      'FRONTEND_URL',
+      'http://localhost:3001',
+    );
+  }
+
+  private layout(content: string): string {
+    return `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background-color:#faf7f2;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#faf7f2;padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#d97706;border-radius:12px 12px 0 0;padding:32px 40px;text-align:center;">
+              <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;letter-spacing:-0.5px;">Vite &amp; Gourmand</h1>
+              <p style="margin:8px 0 0;color:#fef3c7;font-size:14px;font-weight:400;">Traiteur d'exception</p>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="background-color:#ffffff;padding:40px;border-left:1px solid #ebe0cc;border-right:1px solid #ebe0cc;">
+              ${content}
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="background-color:#1e293b;border-radius:0 0 12px 12px;padding:24px 40px;text-align:center;">
+              <p style="margin:0 0 8px;color:#fbbf24;font-size:14px;font-weight:600;">Vite &amp; Gourmand</p>
+              <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.5;">
+                12 Rue Sainte-Catherine, 33000 Bordeaux<br>
+                <a href="${this.frontendUrl}" style="color:#fbbf24;text-decoration:none;">${this.frontendUrl.replace('https://', '')}</a>
+              </p>
+              <p style="margin:16px 0 0;color:#64748b;font-size:11px;">
+                Cet email a été envoyé automatiquement, merci de ne pas y répondre.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+  }
+
+  private button(text: string, url: string): string {
+    return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px auto;">
+  <tr>
+    <td style="background-color:#d97706;border-radius:8px;">
+      <a href="${url}" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">${text}</a>
+    </td>
+  </tr>
+</table>`;
+  }
+
+  private greeting(prenom: string): string {
+    return `<p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Bonjour <strong>${prenom}</strong>,</p>`;
+  }
+
+  private signature(): string {
+    return `<p style="margin:24px 0 0;color:#64748b;font-size:14px;font-style:italic;">L'équipe Vite &amp; Gourmand</p>`;
+  }
+
+  private infoBox(content: string, color = '#d97706'): string {
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;">
+  <tr>
+    <td style="background-color:#fffbeb;border-left:4px solid ${color};border-radius:0 8px 8px 0;padding:16px 20px;">
+      ${content}
+    </td>
+  </tr>
+</table>`;
+  }
+
+  private warningBox(content: string): string {
+    return this.infoBox(content, '#dc2626');
+  }
+
   async sendWelcomeEmail(to: string, prenom: string): Promise<void> {
     try {
       await this.transporter.sendMail({
         from: this.fromAddress,
         to,
         subject: 'Bienvenue chez Vite & Gourmand !',
-        html: `
-          <h1>Bienvenue ${prenom} !</h1>
-          <p>Merci de vous être inscrit(e) chez <strong>Vite & Gourmand</strong>.</p>
-          <p>Vous pouvez dès maintenant parcourir nos menus et passer commande.</p>
-          <p>À très bientôt !</p>
-          <p><em>L'équipe Vite & Gourmand</em></p>
-        `,
+        html: this.layout(`
+          <h2 style="margin:0 0 24px;color:#d97706;font-size:22px;font-weight:700;">Bienvenue parmi nous !</h2>
+          ${this.greeting(prenom)}
+          <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">
+            Merci de vous être inscrit(e) chez <strong>Vite &amp; Gourmand</strong>. Nous sommes ravis de vous compter parmi nos clients.
+          </p>
+          <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">
+            Vous pouvez dès maintenant parcourir nos menus et passer votre première commande pour une prestation traiteur d'exception.
+          </p>
+          ${this.button('Découvrir nos menus', `${this.frontendUrl}/menus`)}
+          ${this.signature()}
+        `),
       });
       this.logger.log(`Email de bienvenue envoyé à ${to}`);
     } catch (error) {
@@ -51,27 +141,28 @@ export class MailService {
     prenom: string,
     resetToken: string,
   ): Promise<void> {
-    const frontendUrl = this.configService.get<string>(
-      'FRONTEND_URL',
-      'http://localhost:3001',
-    );
-    const resetLink = `${frontendUrl}/reset-password/${resetToken}`;
+    const resetLink = `${this.frontendUrl}/reset-password/${resetToken}`;
 
     try {
       await this.transporter.sendMail({
         from: this.fromAddress,
         to,
         subject: 'Réinitialisation de votre mot de passe — Vite & Gourmand',
-        html: `
-          <h1>Réinitialisation de mot de passe</h1>
-          <p>Bonjour ${prenom},</p>
-          <p>Vous avez demandé la réinitialisation de votre mot de passe.</p>
-          <p>Cliquez sur le lien ci-dessous pour définir un nouveau mot de passe :</p>
-          <p><a href="${resetLink}">${resetLink}</a></p>
-          <p>Ce lien est valable pendant 1 heure.</p>
-          <p>Si vous n'avez pas fait cette demande, ignorez cet email.</p>
-          <p><em>L'équipe Vite & Gourmand</em></p>
-        `,
+        html: this.layout(`
+          <h2 style="margin:0 0 24px;color:#d97706;font-size:22px;font-weight:700;">Réinitialisation de mot de passe</h2>
+          ${this.greeting(prenom)}
+          <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">
+            Vous avez demandé la réinitialisation de votre mot de passe. Cliquez sur le bouton ci-dessous pour en définir un nouveau :
+          </p>
+          ${this.button('Réinitialiser mon mot de passe', resetLink)}
+          ${this.infoBox(`
+            <p style="margin:0;color:#92400e;font-size:13px;line-height:1.5;">
+              <strong>Ce lien est valable pendant 1 heure.</strong><br>
+              Si vous n'avez pas fait cette demande, ignorez simplement cet email.
+            </p>
+          `)}
+          ${this.signature()}
+        `),
       });
       this.logger.log(`Email reset password envoyé à ${to}`);
     } catch (error) {
@@ -90,14 +181,30 @@ export class MailService {
         from: this.fromAddress,
         to,
         subject: `Confirmation de commande ${numeroCommande} — Vite & Gourmand`,
-        html: `
-          <h1>Commande confirmée !</h1>
-          <p>Bonjour ${prenom},</p>
-          <p>Votre commande <strong>${numeroCommande}</strong> a bien été enregistrée.</p>
-          <p>Montant total : <strong>${prixTotal.toFixed(2)} €</strong></p>
-          <p>Vous pouvez suivre l'avancement de votre commande depuis votre espace client.</p>
-          <p><em>L'équipe Vite & Gourmand</em></p>
-        `,
+        html: this.layout(`
+          <h2 style="margin:0 0 24px;color:#059669;font-size:22px;font-weight:700;">Commande confirmée !</h2>
+          ${this.greeting(prenom)}
+          <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">
+            Votre commande a bien été enregistrée. Voici le récapitulatif :
+          </p>
+          ${this.infoBox(`
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="color:#92400e;font-size:14px;padding:4px 0;"><strong>N° de commande</strong></td>
+                <td style="color:#92400e;font-size:14px;padding:4px 0;text-align:right;font-weight:700;">${numeroCommande}</td>
+              </tr>
+              <tr>
+                <td style="color:#92400e;font-size:14px;padding:4px 0;"><strong>Montant total</strong></td>
+                <td style="color:#92400e;font-size:14px;padding:4px 0;text-align:right;font-weight:700;">${prixTotal.toFixed(2)} €</td>
+              </tr>
+            </table>
+          `)}
+          <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">
+            Vous pouvez suivre l'avancement de votre commande depuis votre espace client.
+          </p>
+          ${this.button('Suivre ma commande', `${this.frontendUrl}/dashboard`)}
+          ${this.signature()}
+        `),
       });
       this.logger.log(`Email confirmation commande envoyé à ${to}`);
     } catch (error) {
@@ -115,14 +222,24 @@ export class MailService {
         from: this.fromAddress,
         to,
         subject: `Retour du matériel — Commande ${numeroCommande}`,
-        html: `
-          <h1>Retour du matériel</h1>
-          <p>Bonjour ${prenom},</p>
-          <p>Votre prestation <strong>${numeroCommande}</strong> est terminée.</p>
-          <p>Nous vous rappelons que le matériel doit être retourné dans un délai de <strong>10 jours ouvrés</strong>.</p>
-          <p>Passé ce délai, des frais de <strong>600 €</strong> seront appliqués.</p>
-          <p><em>L'équipe Vite & Gourmand</em></p>
-        `,
+        html: this.layout(`
+          <h2 style="margin:0 0 24px;color:#d97706;font-size:22px;font-weight:700;">Retour du matériel</h2>
+          ${this.greeting(prenom)}
+          <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">
+            Votre prestation <strong>${numeroCommande}</strong> est terminée. Nous espérons que tout s'est bien passé !
+          </p>
+          ${this.warningBox(`
+            <p style="margin:0;color:#991b1b;font-size:13px;line-height:1.5;">
+              <strong>Rappel important :</strong> Le matériel doit être retourné dans un délai de <strong>10 jours ouvrés</strong>.<br>
+              Passé ce délai, des frais de <strong>600 €</strong> seront appliqués.
+            </p>
+          `)}
+          <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">
+            Pour toute question concernant le retour du matériel, n'hésitez pas à nous contacter.
+          </p>
+          ${this.button('Nous contacter', `${this.frontendUrl}/contact`)}
+          ${this.signature()}
+        `),
       });
       this.logger.log(`Email retour matériel envoyé à ${to}`);
     } catch (error) {
@@ -135,24 +252,23 @@ export class MailService {
     prenom: string,
     numeroCommande: string,
   ): Promise<void> {
-    const frontendUrl = this.configService.get<string>(
-      'FRONTEND_URL',
-      'http://localhost:3001',
-    );
-
     try {
       await this.transporter.sendMail({
         from: this.fromAddress,
         to,
         subject: `Commande ${numeroCommande} terminée — Donnez votre avis !`,
-        html: `
-          <h1>Commande terminée</h1>
-          <p>Bonjour ${prenom},</p>
-          <p>Votre commande <strong>${numeroCommande}</strong> est terminée.</p>
-          <p>Nous espérons que vous avez apprécié notre service !</p>
-          <p><a href="${frontendUrl}/dashboard">Donnez votre avis</a> pour nous aider à nous améliorer.</p>
-          <p><em>L'équipe Vite & Gourmand</em></p>
-        `,
+        html: this.layout(`
+          <h2 style="margin:0 0 24px;color:#059669;font-size:22px;font-weight:700;">Commande terminée</h2>
+          ${this.greeting(prenom)}
+          <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">
+            Votre commande <strong>${numeroCommande}</strong> est terminée. Nous espérons que vous avez apprécié notre service !
+          </p>
+          <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">
+            Votre avis compte beaucoup pour nous. N'hésitez pas à nous faire part de votre expérience :
+          </p>
+          ${this.button('Donner mon avis', `${this.frontendUrl}/dashboard`)}
+          ${this.signature()}
+        `),
       });
       this.logger.log(`Email commande terminée envoyé à ${to}`);
     } catch (error) {
@@ -161,24 +277,26 @@ export class MailService {
   }
 
   async sendEmployeeCreatedEmail(to: string, prenom: string): Promise<void> {
-    const frontendUrl = this.configService.get<string>(
-      'FRONTEND_URL',
-      'http://localhost:3001',
-    );
-
     try {
       await this.transporter.sendMail({
         from: this.fromAddress,
         to,
         subject: 'Votre compte employé — Vite & Gourmand',
-        html: `
-          <h1>Bienvenue dans l'équipe !</h1>
-          <p>Bonjour ${prenom},</p>
-          <p>Un compte employé a été créé pour vous chez <strong>Vite & Gourmand</strong>.</p>
-          <p>Connectez-vous sur <a href="${frontendUrl}/login">${frontendUrl}/login</a> avec votre email.</p>
-          <p>Votre mot de passe vous a été communiqué séparément.</p>
-          <p><em>L'équipe Vite & Gourmand</em></p>
-        `,
+        html: this.layout(`
+          <h2 style="margin:0 0 24px;color:#d97706;font-size:22px;font-weight:700;">Bienvenue dans l'équipe !</h2>
+          ${this.greeting(prenom)}
+          <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">
+            Un compte employé a été créé pour vous chez <strong>Vite &amp; Gourmand</strong>.
+          </p>
+          ${this.infoBox(`
+            <p style="margin:0;color:#92400e;font-size:13px;line-height:1.5;">
+              Connectez-vous avec votre adresse email.<br>
+              <strong>Votre mot de passe vous a été communiqué séparément.</strong>
+            </p>
+          `)}
+          ${this.button('Se connecter', `${this.frontendUrl}/connexion`)}
+          ${this.signature()}
+        `),
       });
       this.logger.log(`Email création employé envoyé à ${to}`);
     } catch (error) {
@@ -203,13 +321,26 @@ export class MailService {
         to: contactEmail,
         replyTo: emailExpediteur,
         subject: `[Contact] ${sujet}`,
-        html: `
-          <h1>Nouveau message de contact</h1>
-          <p><strong>De :</strong> ${nom ? `${nom} (${emailExpediteur})` : emailExpediteur}</p>
-          <p><strong>Sujet :</strong> ${sujet}</p>
-          <hr>
-          <p>${message}</p>
-        `,
+        html: this.layout(`
+          <h2 style="margin:0 0 24px;color:#d97706;font-size:22px;font-weight:700;">Nouveau message de contact</h2>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
+            <tr>
+              <td style="padding:8px 0;border-bottom:1px solid #ebe0cc;">
+                <span style="color:#64748b;font-size:13px;">Expéditeur</span><br>
+                <strong style="color:#334155;font-size:15px;">${nom ? `${nom} (${emailExpediteur})` : emailExpediteur}</strong>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:8px 0;border-bottom:1px solid #ebe0cc;">
+                <span style="color:#64748b;font-size:13px;">Sujet</span><br>
+                <strong style="color:#334155;font-size:15px;">${sujet}</strong>
+              </td>
+            </tr>
+          </table>
+          ${this.infoBox(`
+            <p style="margin:0;color:#334155;font-size:14px;line-height:1.6;">${message.replace(/\n/g, '<br>')}</p>
+          `)}
+        `),
       });
       this.logger.log(`Email de contact transféré depuis ${emailExpediteur}`);
     } catch (error) {
@@ -227,14 +358,23 @@ export class MailService {
         from: this.fromAddress,
         to,
         subject: `Annulation de votre commande ${numeroCommande} — Vite & Gourmand`,
-        html: `
-          <h1>Commande annulée</h1>
-          <p>Bonjour ${prenom},</p>
-          <p>Votre commande <strong>${numeroCommande}</strong> a bien été annulée.</p>
-          <p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
-          <p>À bientôt !</p>
-          <p><em>L'équipe Vite & Gourmand</em></p>
-        `,
+        html: this.layout(`
+          <h2 style="margin:0 0 24px;color:#dc2626;font-size:22px;font-weight:700;">Commande annulée</h2>
+          ${this.greeting(prenom)}
+          <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">
+            Votre commande <strong>${numeroCommande}</strong> a bien été annulée.
+          </p>
+          ${this.infoBox(`
+            <p style="margin:0;color:#92400e;font-size:13px;line-height:1.5;">
+              Si cette annulation n'est pas de votre fait ou si vous avez des questions, n'hésitez pas à nous contacter.
+            </p>
+          `)}
+          <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">
+            Nous espérons vous retrouver très bientôt pour une prochaine prestation !
+          </p>
+          ${this.button('Voir nos menus', `${this.frontendUrl}/menus`)}
+          ${this.signature()}
+        `),
       });
       this.logger.log(`Email annulation commande envoyé à ${to}`);
     } catch (error) {
