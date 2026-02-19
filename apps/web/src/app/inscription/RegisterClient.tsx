@@ -5,10 +5,19 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { UserPlus, CheckCircle } from 'lucide-react';
+import { UserPlus, CheckCircle, X, Check, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+
+function PasswordCriteria({ met, label }: { met: boolean; label: string }) {
+  return (
+    <li className={`flex items-center gap-1.5 text-xs ${met ? 'text-green-600' : 'text-red-500'}`}>
+      {met ? <Check className="h-3.5 w-3.5 shrink-0" /> : <X className="h-3.5 w-3.5 shrink-0" />}
+      {label}
+    </li>
+  );
+}
 
 export default function RegisterClient() {
   const [form, setForm] = useState({
@@ -23,8 +32,18 @@ export default function RegisterClient() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const { register } = useAuth();
   const router = useRouter();
+
+  const hasMinLength = form.password.length >= 10;
+  const hasUppercase = /[A-Z]/.test(form.password);
+  const hasLowercase = /[a-z]/.test(form.password);
+  const hasDigit = /\d/.test(form.password);
+  const hasSpecial = /[^A-Za-z0-9]/.test(form.password);
+  const passwordsMatch = form.confirmPassword.length > 0 && form.password === form.confirmPassword;
+  const allCriteriaMet = hasMinLength && hasUppercase && hasLowercase && hasDigit && hasSpecial && passwordsMatch;
 
   const update = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm({ ...form, [field]: e.target.value });
@@ -106,12 +125,39 @@ export default function RegisterClient() {
           <Input id="email" label="Email" type="email" placeholder="votre@email.com" value={form.email} onChange={update('email')} required autoComplete="email" />
           <Input id="telephone" label="Téléphone" type="tel" placeholder="06 12 34 56 78" value={form.telephone} onChange={update('telephone')} required />
           <Input id="adresse" label="Adresse postale" placeholder="12 Rue de la Paix, 33000 Bordeaux" value={form.adressePostale} onChange={update('adressePostale')} required />
-          <Input id="password" label="Mot de passe" type="password" placeholder="Min. 10 caractères" value={form.password} onChange={update('password')} required autoComplete="new-password" />
-          <Input id="confirmPassword" label="Confirmer le mot de passe" type="password" placeholder="Confirmez votre mot de passe" value={form.confirmPassword} onChange={update('confirmPassword')} required autoComplete="new-password" />
+          <div className="relative">
+            <Input id="password" label="Mot de passe" type={showPassword ? 'text' : 'password'} placeholder="Min. 10 caractères" value={form.password} onChange={update('password')} required autoComplete="new-password" />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-[34px] text-slate-400 hover:text-slate-600 transition-colors"
+              aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+          <div className="relative">
+            <Input id="confirmPassword" label="Confirmer le mot de passe" type={showConfirm ? 'text' : 'password'} placeholder="Confirmez votre mot de passe" value={form.confirmPassword} onChange={update('confirmPassword')} required autoComplete="new-password" />
+            <button
+              type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              className="absolute right-3 top-[34px] text-slate-400 hover:text-slate-600 transition-colors"
+              aria-label={showConfirm ? 'Masquer la confirmation' : 'Afficher la confirmation'}
+            >
+              {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
 
-          <p className="text-xs text-slate-400">
-            Le mot de passe doit contenir au moins 10 caractères, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.
-          </p>
+          {form.password.length > 0 && (
+            <ul className="space-y-1 pt-1">
+              <PasswordCriteria met={hasMinLength} label="Au moins 10 caractères" />
+              <PasswordCriteria met={hasUppercase} label="Au moins 1 majuscule" />
+              <PasswordCriteria met={hasLowercase} label="Au moins 1 minuscule" />
+              <PasswordCriteria met={hasDigit} label="Au moins 1 chiffre" />
+              <PasswordCriteria met={hasSpecial} label="Au moins 1 caractère spécial" />
+              <PasswordCriteria met={passwordsMatch} label="Les mots de passe correspondent" />
+            </ul>
+          )}
 
           {error && <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">{error}</p>}
 
