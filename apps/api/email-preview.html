@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview Emails - Vite &amp; Gourmand</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; padding: 20px; background: #e2e8f0; font-family: 'Segoe UI', sans-serif; }
+    .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; justify-content: center; }
+    .nav button { padding: 10px 20px; border: 2px solid #d97706; background: #fff; color: #d97706; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 13px; }
+    .nav button.active { background: #d97706; color: #fff; }
+    .nav button:hover { background: #fef3c7; }
+    .nav button.active:hover { background: #b45309; }
+    h2.section-title { text-align: center; color: #1e293b; margin: 0 0 16px; font-size: 18px; }
+    .preview-frame { max-width: 650px; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
+    .email-container { display: none; }
+    .email-container.active { display: block; }
+  </style>
+</head>
+<body>
+
+<h2 class="section-title">Preview des emails Vite &amp; Gourmand</h2>
+
+<div class="nav">
+  <button class="active" onclick="show('welcome')">Bienvenue</button>
+  <button onclick="show('reset')">Reset Password</button>
+  <button onclick="show('order')">Confirmation Commande</button>
+  <button onclick="show('materiel')">Retour Materiel</button>
+  <button onclick="show('completed')">Commande Terminee</button>
+  <button onclick="show('employee')">Compte Employe</button>
+  <button onclick="show('contact')">Contact</button>
+  <button onclick="show('cancelled')">Annulation</button>
+</div>
+
+<div class="preview-frame">
+
+  <!-- BIENVENUE -->
+  <div id="welcome" class="email-container active">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#faf7f2;padding:32px 16px;">
+      <tr><td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+          <tr><td style="border-radius:12px 12px 0 0;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/contact.jpg');background-size:cover;background-position:center 70%;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/contact.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(180,83,9,0.72) 0%, rgba(120,53,3,0.78) 100%);padding:48px 0;border-radius:12px 12px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                <td style="width:150px;vertical-align:middle;text-align:right;padding-right:12px;">
+                  <img src="https://vite-et-gourmand-rust.vercel.app/images/logo_white.png" alt="Vite &amp; Gourmand" width="110" height="110" style="display:block;margin-left:auto;">
+                </td>
+                <td style="vertical-align:middle;text-align:center;">
+                  <h1 style="margin:0;color:#ffffff;font-family:'Playfair Display',Georgia,serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 20px rgba(0,0,0,0.4);">Vite &amp; Gourmand</h1>
+                  <p style="margin:8px 0 0;color:#fbbf24;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 16px rgba(0,0,0,0.4);">Traiteur d'exception</p>
+                </td>
+                <td style="width:150px;"></td>
+              </tr></table>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+          <tr><td style="background-color:#ffffff;padding:40px;border-left:1px solid #ebe0cc;border-right:1px solid #ebe0cc;">
+            <h2 style="margin:0 0 24px;color:#d97706;font-size:22px;font-weight:700;">Bienvenue parmi nous !</h2>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Bonjour <strong>{pr&eacute;nom} {nom}</strong>,</p>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Merci de vous &ecirc;tre inscrit(e) chez <strong>Vite &amp; Gourmand</strong>. Nous sommes ravis de vous compter parmi nos clients.</p>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Vous pouvez d&egrave;s maintenant parcourir nos menus et passer votre premi&egrave;re commande pour une prestation traiteur d'exception.</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px auto;"><tr><td style="background-color:#d97706;border-radius:8px;"><a href="https://vite-et-gourmand-rust.vercel.app/menus" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">D&eacute;couvrir nos menus</a></td></tr></table>
+            <p style="margin:24px 0 0;color:#64748b;font-size:14px;font-style:italic;">L'&eacute;quipe Vite &amp; Gourmand</p>
+          </td></tr>
+          <tr><td style="border-radius:0 0 12px 12px;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg');background-size:cover;background-position:center center;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(15,23,42,0.82) 0%, rgba(15,23,42,0.88) 100%);padding:28px 40px;border-radius:0 0 12px 12px;text-align:center;">
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;"><tr>
+                <td style="vertical-align:middle;padding-right:8px;"><img src="https://vite-et-gourmand-rust.vercel.app/images/logo_gold.png" alt="Logo" width="28" height="28" style="display:block;"></td>
+                <td style="vertical-align:middle;"><span style="color:#fbbf24;font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.5);">Vite &amp; Gourmand</span></td>
+              </tr></table>
+              <p style="margin:0;color:#cbd5e1;font-size:12px;line-height:1.5;text-shadow:0 1px 3px rgba(0,0,0,0.4);">12 Rue Sainte-Catherine, 33000 Bordeaux<br><a href="https://vite-et-gourmand-rust.vercel.app" style="color:#fbbf24;text-decoration:none;">vite-et-gourmand-rust.vercel.app</a></p>
+              <p style="margin:16px 0 0;color:#94a3b8;font-size:11px;text-shadow:0 1px 3px rgba(0,0,0,0.4);">Cet email a &eacute;t&eacute; envoy&eacute; automatiquement, merci de ne pas y r&eacute;pondre.</p>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </div>
+
+  <!-- RESET PASSWORD -->
+  <div id="reset" class="email-container">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#faf7f2;padding:32px 16px;">
+      <tr><td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+          <tr><td style="border-radius:12px 12px 0 0;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/contact.jpg');background-size:cover;background-position:center 70%;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/contact.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(180,83,9,0.72) 0%, rgba(120,53,3,0.78) 100%);padding:48px 0;border-radius:12px 12px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                <td style="width:150px;vertical-align:middle;text-align:right;padding-right:12px;">
+                  <img src="https://vite-et-gourmand-rust.vercel.app/images/logo_white.png" alt="Vite &amp; Gourmand" width="110" height="110" style="display:block;margin-left:auto;">
+                </td>
+                <td style="vertical-align:middle;text-align:center;">
+                  <h1 style="margin:0;color:#ffffff;font-family:'Playfair Display',Georgia,serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 20px rgba(0,0,0,0.4);">Vite &amp; Gourmand</h1>
+                  <p style="margin:8px 0 0;color:#fbbf24;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 16px rgba(0,0,0,0.4);">Traiteur d'exception</p>
+                </td>
+                <td style="width:150px;"></td>
+              </tr></table>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+          <tr><td style="background-color:#ffffff;padding:40px;border-left:1px solid #ebe0cc;border-right:1px solid #ebe0cc;">
+            <h2 style="margin:0 0 24px;color:#d97706;font-size:22px;font-weight:700;">R&eacute;initialisation de mot de passe</h2>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Bonjour <strong>{pr&eacute;nom} {nom}</strong>,</p>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Vous avez demand&eacute; la r&eacute;initialisation de votre mot de passe. Cliquez sur le bouton ci-dessous pour en d&eacute;finir un nouveau :</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px auto;"><tr><td style="background-color:#d97706;border-radius:8px;"><a href="https://vite-et-gourmand-rust.vercel.app/reset-password?token=exemple" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">R&eacute;initialiser mon mot de passe</a></td></tr></table>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;"><tr><td style="background-color:#fffbeb;border-left:4px solid #d97706;border-radius:0 8px 8px 0;padding:16px 20px;">
+              <p style="margin:0;color:#92400e;font-size:13px;line-height:1.5;"><strong>Ce lien est valable pendant 1 heure.</strong><br>Si vous n'avez pas fait cette demande, ignorez simplement cet email.</p>
+            </td></tr></table>
+            <p style="margin:24px 0 0;color:#64748b;font-size:14px;font-style:italic;">L'&eacute;quipe Vite &amp; Gourmand</p>
+          </td></tr>
+          <tr><td style="border-radius:0 0 12px 12px;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg');background-size:cover;background-position:center center;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(15,23,42,0.82) 0%, rgba(15,23,42,0.88) 100%);padding:28px 40px;border-radius:0 0 12px 12px;text-align:center;">
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;"><tr>
+                <td style="vertical-align:middle;padding-right:8px;"><img src="https://vite-et-gourmand-rust.vercel.app/images/logo_gold.png" alt="Logo" width="28" height="28" style="display:block;"></td>
+                <td style="vertical-align:middle;"><span style="color:#fbbf24;font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.5);">Vite &amp; Gourmand</span></td>
+              </tr></table>
+              <p style="margin:0;color:#cbd5e1;font-size:12px;line-height:1.5;text-shadow:0 1px 3px rgba(0,0,0,0.4);">12 Rue Sainte-Catherine, 33000 Bordeaux<br><a href="https://vite-et-gourmand-rust.vercel.app" style="color:#fbbf24;text-decoration:none;">vite-et-gourmand-rust.vercel.app</a></p>
+              <p style="margin:16px 0 0;color:#94a3b8;font-size:11px;text-shadow:0 1px 3px rgba(0,0,0,0.4);">Cet email a &eacute;t&eacute; envoy&eacute; automatiquement, merci de ne pas y r&eacute;pondre.</p>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </div>
+
+  <!-- CONFIRMATION COMMANDE -->
+  <div id="order" class="email-container">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#faf7f2;padding:32px 16px;">
+      <tr><td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+          <tr><td style="border-radius:12px 12px 0 0;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/contact.jpg');background-size:cover;background-position:center 70%;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/contact.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(180,83,9,0.72) 0%, rgba(120,53,3,0.78) 100%);padding:48px 0;border-radius:12px 12px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                <td style="width:150px;vertical-align:middle;text-align:right;padding-right:12px;">
+                  <img src="https://vite-et-gourmand-rust.vercel.app/images/logo_white.png" alt="Vite &amp; Gourmand" width="110" height="110" style="display:block;margin-left:auto;">
+                </td>
+                <td style="vertical-align:middle;text-align:center;">
+                  <h1 style="margin:0;color:#ffffff;font-family:'Playfair Display',Georgia,serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 20px rgba(0,0,0,0.4);">Vite &amp; Gourmand</h1>
+                  <p style="margin:8px 0 0;color:#fbbf24;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 16px rgba(0,0,0,0.4);">Traiteur d'exception</p>
+                </td>
+                <td style="width:150px;"></td>
+              </tr></table>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+          <tr><td style="background-color:#ffffff;padding:40px;border-left:1px solid #ebe0cc;border-right:1px solid #ebe0cc;">
+            <h2 style="margin:0 0 24px;color:#059669;font-size:22px;font-weight:700;">Commande confirm&eacute;e !</h2>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Bonjour <strong>{pr&eacute;nom} {nom}</strong>,</p>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Votre commande a bien &eacute;t&eacute; enregistr&eacute;e. Voici le r&eacute;capitulatif :</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;"><tr><td style="background-color:#fffbeb;border-left:4px solid #d97706;border-radius:0 8px 8px 0;padding:16px 20px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="color:#92400e;font-size:14px;padding:4px 0;"><strong>N&deg; de commande</strong></td>
+                  <td style="color:#92400e;font-size:14px;padding:4px 0;text-align:right;font-weight:700;">CMD-2024-0042</td>
+                </tr>
+                <tr>
+                  <td style="color:#92400e;font-size:14px;padding:4px 0;"><strong>Montant total</strong></td>
+                  <td style="color:#92400e;font-size:14px;padding:4px 0;text-align:right;font-weight:700;">450.00 &euro;</td>
+                </tr>
+              </table>
+            </td></tr></table>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Vous pouvez suivre l'avancement de votre commande depuis votre espace client.</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px auto;"><tr><td style="background-color:#d97706;border-radius:8px;"><a href="https://vite-et-gourmand-rust.vercel.app/connexion" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">Suivre ma commande</a></td></tr></table>
+            <p style="margin:24px 0 0;color:#64748b;font-size:14px;font-style:italic;">L'&eacute;quipe Vite &amp; Gourmand</p>
+          </td></tr>
+          <tr><td style="border-radius:0 0 12px 12px;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg');background-size:cover;background-position:center center;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(15,23,42,0.82) 0%, rgba(15,23,42,0.88) 100%);padding:28px 40px;border-radius:0 0 12px 12px;text-align:center;">
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;"><tr>
+                <td style="vertical-align:middle;padding-right:8px;"><img src="https://vite-et-gourmand-rust.vercel.app/images/logo_gold.png" alt="Logo" width="28" height="28" style="display:block;"></td>
+                <td style="vertical-align:middle;"><span style="color:#fbbf24;font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.5);">Vite &amp; Gourmand</span></td>
+              </tr></table>
+              <p style="margin:0;color:#cbd5e1;font-size:12px;line-height:1.5;text-shadow:0 1px 3px rgba(0,0,0,0.4);">12 Rue Sainte-Catherine, 33000 Bordeaux<br><a href="https://vite-et-gourmand-rust.vercel.app" style="color:#fbbf24;text-decoration:none;">vite-et-gourmand-rust.vercel.app</a></p>
+              <p style="margin:16px 0 0;color:#94a3b8;font-size:11px;text-shadow:0 1px 3px rgba(0,0,0,0.4);">Cet email a &eacute;t&eacute; envoy&eacute; automatiquement, merci de ne pas y r&eacute;pondre.</p>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </div>
+
+  <!-- RETOUR MATERIEL -->
+  <div id="materiel" class="email-container">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#faf7f2;padding:32px 16px;">
+      <tr><td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+          <tr><td style="border-radius:12px 12px 0 0;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/contact.jpg');background-size:cover;background-position:center 70%;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/contact.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(180,83,9,0.72) 0%, rgba(120,53,3,0.78) 100%);padding:48px 0;border-radius:12px 12px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                <td style="width:150px;vertical-align:middle;text-align:right;padding-right:12px;">
+                  <img src="https://vite-et-gourmand-rust.vercel.app/images/logo_white.png" alt="Vite &amp; Gourmand" width="110" height="110" style="display:block;margin-left:auto;">
+                </td>
+                <td style="vertical-align:middle;text-align:center;">
+                  <h1 style="margin:0;color:#ffffff;font-family:'Playfair Display',Georgia,serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 20px rgba(0,0,0,0.4);">Vite &amp; Gourmand</h1>
+                  <p style="margin:8px 0 0;color:#fbbf24;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 16px rgba(0,0,0,0.4);">Traiteur d'exception</p>
+                </td>
+                <td style="width:150px;"></td>
+              </tr></table>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+          <tr><td style="background-color:#ffffff;padding:40px;border-left:1px solid #ebe0cc;border-right:1px solid #ebe0cc;">
+            <h2 style="margin:0 0 24px;color:#d97706;font-size:22px;font-weight:700;">Retour du mat&eacute;riel</h2>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Bonjour <strong>{pr&eacute;nom} {nom}</strong>,</p>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Votre prestation <strong>CMD-2024-0042</strong> est termin&eacute;e. Nous esp&eacute;rons que tout s'est bien pass&eacute; !</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;"><tr><td style="background-color:#fffbeb;border-left:4px solid #dc2626;border-radius:0 8px 8px 0;padding:16px 20px;">
+              <p style="margin:0;color:#991b1b;font-size:13px;line-height:1.5;"><strong>Rappel important :</strong> Le mat&eacute;riel doit &ecirc;tre retourn&eacute; dans un d&eacute;lai de <strong>10 jours ouvr&eacute;s</strong>.<br>Pass&eacute; ce d&eacute;lai, des frais de <strong>600 &euro;</strong> seront appliqu&eacute;s.</p>
+            </td></tr></table>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Pour toute question concernant le retour du mat&eacute;riel, n'h&eacute;sitez pas &agrave; nous contacter.</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px auto;"><tr><td style="background-color:#d97706;border-radius:8px;"><a href="https://vite-et-gourmand-rust.vercel.app/contact" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">Nous contacter</a></td></tr></table>
+            <p style="margin:24px 0 0;color:#64748b;font-size:14px;font-style:italic;">L'&eacute;quipe Vite &amp; Gourmand</p>
+          </td></tr>
+          <tr><td style="border-radius:0 0 12px 12px;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg');background-size:cover;background-position:center center;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(15,23,42,0.82) 0%, rgba(15,23,42,0.88) 100%);padding:28px 40px;border-radius:0 0 12px 12px;text-align:center;">
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;"><tr>
+                <td style="vertical-align:middle;padding-right:8px;"><img src="https://vite-et-gourmand-rust.vercel.app/images/logo_gold.png" alt="Logo" width="28" height="28" style="display:block;"></td>
+                <td style="vertical-align:middle;"><span style="color:#fbbf24;font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.5);">Vite &amp; Gourmand</span></td>
+              </tr></table>
+              <p style="margin:0;color:#cbd5e1;font-size:12px;line-height:1.5;text-shadow:0 1px 3px rgba(0,0,0,0.4);">12 Rue Sainte-Catherine, 33000 Bordeaux<br><a href="https://vite-et-gourmand-rust.vercel.app" style="color:#fbbf24;text-decoration:none;">vite-et-gourmand-rust.vercel.app</a></p>
+              <p style="margin:16px 0 0;color:#94a3b8;font-size:11px;text-shadow:0 1px 3px rgba(0,0,0,0.4);">Cet email a &eacute;t&eacute; envoy&eacute; automatiquement, merci de ne pas y r&eacute;pondre.</p>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </div>
+
+  <!-- COMMANDE TERMINEE -->
+  <div id="completed" class="email-container">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#faf7f2;padding:32px 16px;">
+      <tr><td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+          <tr><td style="border-radius:12px 12px 0 0;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/contact.jpg');background-size:cover;background-position:center 70%;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/contact.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(180,83,9,0.72) 0%, rgba(120,53,3,0.78) 100%);padding:48px 0;border-radius:12px 12px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                <td style="width:150px;vertical-align:middle;text-align:right;padding-right:12px;">
+                  <img src="https://vite-et-gourmand-rust.vercel.app/images/logo_white.png" alt="Vite &amp; Gourmand" width="110" height="110" style="display:block;margin-left:auto;">
+                </td>
+                <td style="vertical-align:middle;text-align:center;">
+                  <h1 style="margin:0;color:#ffffff;font-family:'Playfair Display',Georgia,serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 20px rgba(0,0,0,0.4);">Vite &amp; Gourmand</h1>
+                  <p style="margin:8px 0 0;color:#fbbf24;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 16px rgba(0,0,0,0.4);">Traiteur d'exception</p>
+                </td>
+                <td style="width:150px;"></td>
+              </tr></table>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+          <tr><td style="background-color:#ffffff;padding:40px;border-left:1px solid #ebe0cc;border-right:1px solid #ebe0cc;">
+            <h2 style="margin:0 0 24px;color:#059669;font-size:22px;font-weight:700;">Commande termin&eacute;e</h2>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Bonjour <strong>{pr&eacute;nom} {nom}</strong>,</p>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Votre commande <strong>CMD-2024-0042</strong> est termin&eacute;e. Nous esp&eacute;rons que vous avez appr&eacute;ci&eacute; notre service !</p>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Votre avis compte beaucoup pour nous. N'h&eacute;sitez pas &agrave; nous faire part de votre exp&eacute;rience :</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px auto;"><tr><td style="background-color:#d97706;border-radius:8px;"><a href="https://vite-et-gourmand-rust.vercel.app/contact" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">Donner mon avis</a></td></tr></table>
+            <p style="margin:24px 0 0;color:#64748b;font-size:14px;font-style:italic;">L'&eacute;quipe Vite &amp; Gourmand</p>
+          </td></tr>
+          <tr><td style="border-radius:0 0 12px 12px;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg');background-size:cover;background-position:center center;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(15,23,42,0.82) 0%, rgba(15,23,42,0.88) 100%);padding:28px 40px;border-radius:0 0 12px 12px;text-align:center;">
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;"><tr>
+                <td style="vertical-align:middle;padding-right:8px;"><img src="https://vite-et-gourmand-rust.vercel.app/images/logo_gold.png" alt="Logo" width="28" height="28" style="display:block;"></td>
+                <td style="vertical-align:middle;"><span style="color:#fbbf24;font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.5);">Vite &amp; Gourmand</span></td>
+              </tr></table>
+              <p style="margin:0;color:#cbd5e1;font-size:12px;line-height:1.5;text-shadow:0 1px 3px rgba(0,0,0,0.4);">12 Rue Sainte-Catherine, 33000 Bordeaux<br><a href="https://vite-et-gourmand-rust.vercel.app" style="color:#fbbf24;text-decoration:none;">vite-et-gourmand-rust.vercel.app</a></p>
+              <p style="margin:16px 0 0;color:#94a3b8;font-size:11px;text-shadow:0 1px 3px rgba(0,0,0,0.4);">Cet email a &eacute;t&eacute; envoy&eacute; automatiquement, merci de ne pas y r&eacute;pondre.</p>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </div>
+
+  <!-- COMPTE EMPLOYE -->
+  <div id="employee" class="email-container">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#faf7f2;padding:32px 16px;">
+      <tr><td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+          <tr><td style="border-radius:12px 12px 0 0;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/contact.jpg');background-size:cover;background-position:center 70%;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/contact.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(180,83,9,0.72) 0%, rgba(120,53,3,0.78) 100%);padding:48px 0;border-radius:12px 12px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                <td style="width:150px;vertical-align:middle;text-align:right;padding-right:12px;">
+                  <img src="https://vite-et-gourmand-rust.vercel.app/images/logo_white.png" alt="Vite &amp; Gourmand" width="110" height="110" style="display:block;margin-left:auto;">
+                </td>
+                <td style="vertical-align:middle;text-align:center;">
+                  <h1 style="margin:0;color:#ffffff;font-family:'Playfair Display',Georgia,serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 20px rgba(0,0,0,0.4);">Vite &amp; Gourmand</h1>
+                  <p style="margin:8px 0 0;color:#fbbf24;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 16px rgba(0,0,0,0.4);">Traiteur d'exception</p>
+                </td>
+                <td style="width:150px;"></td>
+              </tr></table>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+          <tr><td style="background-color:#ffffff;padding:40px;border-left:1px solid #ebe0cc;border-right:1px solid #ebe0cc;">
+            <h2 style="margin:0 0 24px;color:#d97706;font-size:22px;font-weight:700;">Bienvenue dans l'&eacute;quipe !</h2>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Bonjour <strong>{pr&eacute;nom} {nom}</strong>,</p>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Un compte employ&eacute; a &eacute;t&eacute; cr&eacute;&eacute; pour vous chez <strong>Vite &amp; Gourmand</strong>.</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;"><tr><td style="background-color:#fffbeb;border-left:4px solid #d97706;border-radius:0 8px 8px 0;padding:16px 20px;">
+              <p style="margin:0;color:#92400e;font-size:13px;line-height:1.5;">Connectez-vous avec votre adresse email.<br><strong>Votre mot de passe vous a &eacute;t&eacute; communiqu&eacute; s&eacute;par&eacute;ment.</strong></p>
+            </td></tr></table>
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px auto;"><tr><td style="background-color:#d97706;border-radius:8px;"><a href="https://vite-et-gourmand-rust.vercel.app/connexion" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">Se connecter</a></td></tr></table>
+            <p style="margin:24px 0 0;color:#64748b;font-size:14px;font-style:italic;">L'&eacute;quipe Vite &amp; Gourmand</p>
+          </td></tr>
+          <tr><td style="border-radius:0 0 12px 12px;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg');background-size:cover;background-position:center center;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(15,23,42,0.82) 0%, rgba(15,23,42,0.88) 100%);padding:28px 40px;border-radius:0 0 12px 12px;text-align:center;">
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;"><tr>
+                <td style="vertical-align:middle;padding-right:8px;"><img src="https://vite-et-gourmand-rust.vercel.app/images/logo_gold.png" alt="Logo" width="28" height="28" style="display:block;"></td>
+                <td style="vertical-align:middle;"><span style="color:#fbbf24;font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.5);">Vite &amp; Gourmand</span></td>
+              </tr></table>
+              <p style="margin:0;color:#cbd5e1;font-size:12px;line-height:1.5;text-shadow:0 1px 3px rgba(0,0,0,0.4);">12 Rue Sainte-Catherine, 33000 Bordeaux<br><a href="https://vite-et-gourmand-rust.vercel.app" style="color:#fbbf24;text-decoration:none;">vite-et-gourmand-rust.vercel.app</a></p>
+              <p style="margin:16px 0 0;color:#94a3b8;font-size:11px;text-shadow:0 1px 3px rgba(0,0,0,0.4);">Cet email a &eacute;t&eacute; envoy&eacute; automatiquement, merci de ne pas y r&eacute;pondre.</p>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </div>
+
+  <!-- CONTACT -->
+  <div id="contact" class="email-container">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#faf7f2;padding:32px 16px;">
+      <tr><td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+          <tr><td style="border-radius:12px 12px 0 0;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/contact.jpg');background-size:cover;background-position:center 70%;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/contact.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(180,83,9,0.72) 0%, rgba(120,53,3,0.78) 100%);padding:48px 0;border-radius:12px 12px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                <td style="width:150px;vertical-align:middle;text-align:right;padding-right:12px;">
+                  <img src="https://vite-et-gourmand-rust.vercel.app/images/logo_white.png" alt="Vite &amp; Gourmand" width="110" height="110" style="display:block;margin-left:auto;">
+                </td>
+                <td style="vertical-align:middle;text-align:center;">
+                  <h1 style="margin:0;color:#ffffff;font-family:'Playfair Display',Georgia,serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 20px rgba(0,0,0,0.4);">Vite &amp; Gourmand</h1>
+                  <p style="margin:8px 0 0;color:#fbbf24;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 16px rgba(0,0,0,0.4);">Traiteur d'exception</p>
+                </td>
+                <td style="width:150px;"></td>
+              </tr></table>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+          <tr><td style="background-color:#ffffff;padding:40px;border-left:1px solid #ebe0cc;border-right:1px solid #ebe0cc;">
+            <h2 style="margin:0 0 24px;color:#d97706;font-size:22px;font-weight:700;">Nouveau message de contact</h2>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
+              <tr><td style="padding:8px 0;border-bottom:1px solid #ebe0cc;">
+                <span style="color:#64748b;font-size:13px;">Exp&eacute;diteur</span><br>
+                <strong style="color:#334155;font-size:15px;">Marie Dupont (marie.dupont@email.com)</strong>
+              </td></tr>
+              <tr><td style="padding:8px 0;border-bottom:1px solid #ebe0cc;">
+                <span style="color:#64748b;font-size:13px;">Sujet</span><br>
+                <strong style="color:#334155;font-size:15px;">Demande de devis pour un mariage</strong>
+              </td></tr>
+            </table>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;"><tr><td style="background-color:#fffbeb;border-left:4px solid #d97706;border-radius:0 8px 8px 0;padding:16px 20px;">
+              <p style="margin:0;color:#334155;font-size:14px;line-height:1.6;">Bonjour, nous souhaiterions organiser un repas pour notre mariage pr&eacute;vu le 15 juin 2025. Nous serons environ 80 personnes. Pourriez-vous nous envoyer un devis pour un menu complet avec entr&eacute;e, plat et dessert ? Merci d'avance.</p>
+            </td></tr></table>
+          </td></tr>
+          <tr><td style="border-radius:0 0 12px 12px;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg');background-size:cover;background-position:center center;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(15,23,42,0.82) 0%, rgba(15,23,42,0.88) 100%);padding:28px 40px;border-radius:0 0 12px 12px;text-align:center;">
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;"><tr>
+                <td style="vertical-align:middle;padding-right:8px;"><img src="https://vite-et-gourmand-rust.vercel.app/images/logo_gold.png" alt="Logo" width="28" height="28" style="display:block;"></td>
+                <td style="vertical-align:middle;"><span style="color:#fbbf24;font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.5);">Vite &amp; Gourmand</span></td>
+              </tr></table>
+              <p style="margin:0;color:#cbd5e1;font-size:12px;line-height:1.5;text-shadow:0 1px 3px rgba(0,0,0,0.4);">12 Rue Sainte-Catherine, 33000 Bordeaux<br><a href="https://vite-et-gourmand-rust.vercel.app" style="color:#fbbf24;text-decoration:none;">vite-et-gourmand-rust.vercel.app</a></p>
+              <p style="margin:16px 0 0;color:#94a3b8;font-size:11px;text-shadow:0 1px 3px rgba(0,0,0,0.4);">Cet email a &eacute;t&eacute; envoy&eacute; automatiquement, merci de ne pas y r&eacute;pondre.</p>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </div>
+
+  <!-- ANNULATION -->
+  <div id="cancelled" class="email-container">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#faf7f2;padding:32px 16px;">
+      <tr><td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+          <tr><td style="border-radius:12px 12px 0 0;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/contact.jpg');background-size:cover;background-position:center 70%;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/contact.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(180,83,9,0.72) 0%, rgba(120,53,3,0.78) 100%);padding:48px 0;border-radius:12px 12px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                <td style="width:150px;vertical-align:middle;text-align:right;padding-right:12px;">
+                  <img src="https://vite-et-gourmand-rust.vercel.app/images/logo_white.png" alt="Vite &amp; Gourmand" width="110" height="110" style="display:block;margin-left:auto;">
+                </td>
+                <td style="vertical-align:middle;text-align:center;">
+                  <h1 style="margin:0;color:#ffffff;font-family:'Playfair Display',Georgia,serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 20px rgba(0,0,0,0.4);">Vite &amp; Gourmand</h1>
+                  <p style="margin:8px 0 0;color:#fbbf24;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 16px rgba(0,0,0,0.4);">Traiteur d'exception</p>
+                </td>
+                <td style="width:150px;"></td>
+              </tr></table>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+          <tr><td style="background-color:#ffffff;padding:40px;border-left:1px solid #ebe0cc;border-right:1px solid #ebe0cc;">
+            <h2 style="margin:0 0 24px;color:#dc2626;font-size:22px;font-weight:700;">Commande annul&eacute;e</h2>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Bonjour <strong>{pr&eacute;nom} {nom}</strong>,</p>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Votre commande <strong>CMD-2024-0042</strong> a bien &eacute;t&eacute; annul&eacute;e.</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;"><tr><td style="background-color:#fffbeb;border-left:4px solid #d97706;border-radius:0 8px 8px 0;padding:16px 20px;">
+              <p style="margin:0;color:#92400e;font-size:13px;line-height:1.5;">Si cette annulation n'est pas de votre fait ou si vous avez des questions, n'h&eacute;sitez pas &agrave; nous contacter.</p>
+            </td></tr></table>
+            <p style="margin:0 0 16px;color:#334155;font-size:15px;line-height:1.6;">Nous esp&eacute;rons vous retrouver tr&egrave;s bient&ocirc;t pour une prochaine prestation !</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px auto;"><tr><td style="background-color:#d97706;border-radius:8px;"><a href="https://vite-et-gourmand-rust.vercel.app/menus" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">Voir nos menus</a></td></tr></table>
+            <p style="margin:24px 0 0;color:#64748b;font-size:14px;font-style:italic;">L'&eacute;quipe Vite &amp; Gourmand</p>
+          </td></tr>
+          <tr><td style="border-radius:0 0 12px 12px;padding:0;overflow:hidden;background-image:url('https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg');background-size:cover;background-position:center center;">
+            <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="https://vite-et-gourmand-rust.vercel.app/images/cta-bg.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+            <div style="background:linear-gradient(to bottom, rgba(15,23,42,0.82) 0%, rgba(15,23,42,0.88) 100%);padding:28px 40px;border-radius:0 0 12px 12px;text-align:center;">
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;"><tr>
+                <td style="vertical-align:middle;padding-right:8px;"><img src="https://vite-et-gourmand-rust.vercel.app/images/logo_gold.png" alt="Logo" width="28" height="28" style="display:block;"></td>
+                <td style="vertical-align:middle;"><span style="color:#fbbf24;font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.5);">Vite &amp; Gourmand</span></td>
+              </tr></table>
+              <p style="margin:0;color:#cbd5e1;font-size:12px;line-height:1.5;text-shadow:0 1px 3px rgba(0,0,0,0.4);">12 Rue Sainte-Catherine, 33000 Bordeaux<br><a href="https://vite-et-gourmand-rust.vercel.app" style="color:#fbbf24;text-decoration:none;">vite-et-gourmand-rust.vercel.app</a></p>
+              <p style="margin:16px 0 0;color:#94a3b8;font-size:11px;text-shadow:0 1px 3px rgba(0,0,0,0.4);">Cet email a &eacute;t&eacute; envoy&eacute; automatiquement, merci de ne pas y r&eacute;pondre.</p>
+            </div>
+            <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </div>
+
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.email-container').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

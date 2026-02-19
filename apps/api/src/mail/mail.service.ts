@@ -33,23 +33,40 @@ export class MailService {
     );
   }
 
+  private get baseImageUrl(): string {
+    return 'https://vite-et-gourmand-rust.vercel.app/images';
+  }
+
   private layout(content: string): string {
     return `<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 </head>
 <body style="margin:0;padding:0;background-color:#faf7f2;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#faf7f2;padding:32px 16px;">
     <tr>
       <td align="center">
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
-          <!-- Header -->
+          <!-- Header with storefront photo -->
           <tr>
-            <td style="background-color:#d97706;border-radius:12px 12px 0 0;padding:32px 40px;text-align:center;">
-              <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;letter-spacing:-0.5px;">Vite &amp; Gourmand</h1>
-              <p style="margin:8px 0 0;color:#fef3c7;font-size:14px;font-weight:400;">Traiteur d'exception</p>
+            <td style="border-radius:12px 12px 0 0;padding:0;overflow:hidden;background-image:url('${this.baseImageUrl}/contact.jpg');background-size:cover;background-position:center 70%;">
+              <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="${this.baseImageUrl}/contact.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+              <div style="background:linear-gradient(to bottom, rgba(180,83,9,0.72) 0%, rgba(120,53,3,0.78) 100%);padding:48px 0;border-radius:12px 12px 0 0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                  <td style="width:150px;vertical-align:middle;text-align:right;padding-right:12px;">
+                    <img src="${this.baseImageUrl}/logo_white.png" alt="Vite &amp; Gourmand" width="110" height="110" style="display:block;margin-left:auto;">
+                  </td>
+                  <td style="vertical-align:middle;text-align:center;">
+                    <h1 style="margin:0;color:#ffffff;font-family:'Playfair Display',Georgia,serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 20px rgba(0,0,0,0.4);">Vite &amp; Gourmand</h1>
+                    <p style="margin:8px 0 0;color:#fbbf24;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,0.7),0 0 16px rgba(0,0,0,0.4);">Traiteur d'exception</p>
+                  </td>
+                  <td style="width:150px;"></td>
+                </tr></table>
+              </div>
+              <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
             </td>
           </tr>
           <!-- Body -->
@@ -58,17 +75,24 @@ export class MailService {
               ${content}
             </td>
           </tr>
-          <!-- Footer -->
+          <!-- Footer with kitchen photo -->
           <tr>
-            <td style="background-color:#1e293b;border-radius:0 0 12px 12px;padding:24px 40px;text-align:center;">
-              <p style="margin:0 0 8px;color:#fbbf24;font-size:14px;font-weight:600;">Vite &amp; Gourmand</p>
-              <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.5;">
-                12 Rue Sainte-Catherine, 33000 Bordeaux<br>
-                <a href="${this.frontendUrl}" style="color:#fbbf24;text-decoration:none;">${this.frontendUrl.replace('https://', '')}</a>
-              </p>
-              <p style="margin:16px 0 0;color:#64748b;font-size:11px;">
-                Cet email a été envoyé automatiquement, merci de ne pas y répondre.
-              </p>
+            <td style="border-radius:0 0 12px 12px;padding:0;overflow:hidden;background-image:url('${this.baseImageUrl}/cta-bg.jpg');background-size:cover;background-position:center center;">
+              <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="${this.baseImageUrl}/cta-bg.jpg" /><v:textbox inset="0,0,0,0"><![endif]-->
+              <div style="background:linear-gradient(to bottom, rgba(15,23,42,0.82) 0%, rgba(15,23,42,0.88) 100%);padding:28px 40px;border-radius:0 0 12px 12px;text-align:center;">
+                <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;"><tr>
+                  <td style="vertical-align:middle;padding-right:8px;"><img src="${this.baseImageUrl}/logo_gold.png" alt="Logo" width="28" height="28" style="display:block;"></td>
+                  <td style="vertical-align:middle;"><span style="color:#fbbf24;font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.5);">Vite &amp; Gourmand</span></td>
+                </tr></table>
+                <p style="margin:0;color:#cbd5e1;font-size:12px;line-height:1.5;text-shadow:0 1px 3px rgba(0,0,0,0.4);">
+                  12 Rue Sainte-Catherine, 33000 Bordeaux<br>
+                  <a href="${this.frontendUrl}" style="color:#fbbf24;text-decoration:none;">${this.frontendUrl.replace('https://', '')}</a>
+                </p>
+                <p style="margin:16px 0 0;color:#94a3b8;font-size:11px;text-shadow:0 1px 3px rgba(0,0,0,0.4);">
+                  Cet email a été envoyé automatiquement, merci de ne pas y répondre.
+                </p>
+              </div>
+              <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
             </td>
           </tr>
         </table>
