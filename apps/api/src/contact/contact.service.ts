@@ -7,7 +7,7 @@ export class ContactService {
   constructor(private readonly mailService: MailService) {}
 
   async send(dto: CreateContactDto) {
-    await this.mailService.sendContactEmail(dto.titre, dto.description, dto.email);
+    await this.mailService.sendContactEmail(dto.sujet, dto.message, dto.email, dto.nom);
 
     return { message: 'Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.' };
   }

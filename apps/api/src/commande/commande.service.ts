@@ -95,6 +95,7 @@ export class CommandeService {
           prixMenu: prixMenuFinal,
           nombrePersonnes: dto.nombrePersonnes,
           prixLivraison,
+          modeContact: dto.modeContact,
           utilisateurId: userId,
           menuId: menu.id,
           historiqueStatuts: {

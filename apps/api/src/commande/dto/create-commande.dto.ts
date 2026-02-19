@@ -2,6 +2,7 @@ import {
   IsDateString,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Min,
 } from 'class-validator';
@@ -24,4 +25,8 @@ export class CreateCommandeDto {
   @IsString()
   @IsNotEmpty()
   adresse: string;
+
+  @IsOptional()
+  @IsString()
+  modeContact?: string;
 }

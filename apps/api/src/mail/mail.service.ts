@@ -187,9 +187,10 @@ export class MailService {
   }
 
   async sendContactEmail(
-    titre: string,
-    description: string,
+    sujet: string,
+    message: string,
     emailExpediteur: string,
+    nom?: string,
   ): Promise<void> {
     const contactEmail = this.configService.get<string>(
       'CONTACT_EMAIL',
@@ -201,13 +202,13 @@ export class MailService {
         from: this.fromAddress,
         to: contactEmail,
         replyTo: emailExpediteur,
-        subject: `[Contact] ${titre}`,
+        subject: `[Contact] ${sujet}`,
         html: `
           <h1>Nouveau message de contact</h1>
-          <p><strong>De :</strong> ${emailExpediteur}</p>
-          <p><strong>Sujet :</strong> ${titre}</p>
+          <p><strong>De :</strong> ${nom ? `${nom} (${emailExpediteur})` : emailExpediteur}</p>
+          <p><strong>Sujet :</strong> ${sujet}</p>
           <hr>
-          <p>${description}</p>
+          <p>${message}</p>
         `,
       });
       this.logger.log(`Email de contact transféré depuis ${emailExpediteur}`);
