@@ -216,4 +216,29 @@ export class MailService {
       this.logger.error(`Échec envoi email contact depuis ${emailExpediteur}`, error);
     }
   }
+
+  async sendOrderCancelledEmail(
+    to: string,
+    prenom: string,
+    numeroCommande: string,
+  ): Promise<void> {
+    try {
+      await this.transporter.sendMail({
+        from: this.fromAddress,
+        to,
+        subject: `Annulation de votre commande ${numeroCommande} — Vite & Gourmand`,
+        html: `
+          <h1>Commande annulée</h1>
+          <p>Bonjour ${prenom},</p>
+          <p>Votre commande <strong>${numeroCommande}</strong> a bien été annulée.</p>
+          <p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
+          <p>À bientôt !</p>
+          <p><em>L'équipe Vite & Gourmand</em></p>
+        `,
+      });
+      this.logger.log(`Email annulation commande envoyé à ${to}`);
+    } catch (error) {
+      this.logger.error(`Échec envoi email annulation à ${to}`, error);
+    }
+  }
 }

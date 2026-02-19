@@ -231,7 +231,10 @@ export class CommandeService {
   }
 
   async cancel(id: number, userId: number) {
-    const commande = await this.prisma.commande.findUnique({ where: { id } });
+    const commande = await this.prisma.commande.findUnique({
+      where: { id },
+      include: { utilisateur: true },
+    });
 
     if (!commande) throw new NotFoundException('Commande introuvable');
     if (commande.utilisateurId !== userId) throw new ForbiddenException('Accès refusé');
@@ -239,7 +242,7 @@ export class CommandeService {
       throw new BadRequestException('Cette commande ne peut plus être annulée');
     }
 
-    return this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx) => {
       // Restore stock
       await tx.menu.update({
         where: { id: commande.menuId },
@@ -254,6 +257,15 @@ export class CommandeService {
         },
       });
     });
+
+    // Send cancellation confirmation email (async, non-blocking)
+    this.mailService.sendOrderCancelledEmail(
+      commande.utilisateur.email,
+      commande.utilisateur.prenom,
+      commande.numeroCommande,
+    ).catch(() => {});
+
+    return result;
   }
 
   async updateStatut(id: number, dto: UpdateStatutDto) {
