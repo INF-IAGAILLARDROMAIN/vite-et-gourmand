@@ -38,6 +38,13 @@ export default function MenusClient() {
   const allThemes = [...new Set(menuList.flatMap((m) => m.themes?.map((t) => t.theme.libelle) ?? []))];
   const allRegimes = [...new Set(menuList.flatMap((m) => m.regimes?.map((r) => r.regime.libelle) ?? []))];
 
+  // Budget options based on actual menu prices (sorted unique prices)
+  const budgetOptions = (() => {
+    if (menuList.length === 0) return [];
+    const prices = [...new Set(menuList.map((m) => m.prixParPersonne))].sort((a, b) => a - b);
+    return prices;
+  })();
+
   const hasFilters = themeFilter || regimeFilter || prixMax;
 
   return (
@@ -96,10 +103,9 @@ export default function MenusClient() {
             className="px-4 py-2.5 rounded-lg border border-slate-300 bg-white text-sm focus:ring-2 focus:ring-primary-500"
           >
             <option value="">Budget max</option>
-            <option value="20">20€ / pers</option>
-            <option value="30">30€ / pers</option>
-            <option value="50">50€ / pers</option>
-            <option value="80">80€ / pers</option>
+            {budgetOptions.map((p) => (
+              <option key={p} value={p}>{p}€ / pers</option>
+            ))}
           </select>
 
           {hasFilters && (
